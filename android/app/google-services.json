@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "529636745826",
+    "project_id": "jukeboxd-38e73",
+    "storage_bucket": "jukeboxd-38e73.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:529636745826:android:cb3bc407810a58ed68a73b",
+        "android_client_info": {
+          "package_name": "com.example.jukeboxd"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "529636745826-dpdfn6fdn1ukbtbqarsdu2adrj4g9c06.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.jukeboxd",
+            "certificate_hash": "dc74969ea1e762c6f718217212825fbcc654ed70"
+          }
+        },
+        {
+          "client_id": "529636745826-dtd3n1g63strohkrnq4h95q3af992cbp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBS4UTDvlvTx12O_MulyDeB_FvBJ0kbku8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "529636745826-dtd3n1g63strohkrnq4h95q3af992cbp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
