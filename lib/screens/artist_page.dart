@@ -20,7 +20,6 @@ class _ArtistPageState extends State<ArtistPage> {
   List TestAlbums = [];
   List artistAlbums = [];
   var imageUrl = '';
-  var artistId = '1r1uxoy19fzMxunt3ONAkG';
   var countryCode = 'US';
 
   void _getArtist(artistId) {
@@ -68,6 +67,7 @@ class _ArtistPageState extends State<ArtistPage> {
   }
 
   @override
+  void initState() {}
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
@@ -80,14 +80,6 @@ class _ArtistPageState extends State<ArtistPage> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              ElevatedButton(
-                  onPressed: (() {
-                    _getArtist(artistId);
-                    _getTopTracks(artistId, countryCode);
-                    _getAlbums(artistId);
-                    _getImage(artistId);
-                  }),
-                  child: Text('Push for album')),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
