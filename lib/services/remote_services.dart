@@ -23,6 +23,26 @@ class RemoteService {
     return track;
   }
 
+  Future<Iterable<Track>> getTopTracks(
+      String artistId, String countryCode) async {
+    Iterable<Track> topTracksName = [];
+    final spotify = SpotifyApi(credentials);
+    final topTracks = await spotify.artists.getTopTracks(artistId, countryCode);
+    for (var tracks in topTracks) {
+      topTracksName = topTracks;
+    }
+    return topTracksName;
+  }
+
+  Future<List<Album>> getArtistAlbums(String artistId) async {
+    List<String> Groups = ['album'];
+    String countryCode = 'US';
+    final spotify = SpotifyApi(credentials);
+    final artistAlbums = spotify.artists.albums(artistId);
+    var albumList = await artistAlbums.all();
+    return albumList.toList();
+  }
+
   Future<List<TrackSimple>?> getAlbumTracks(String albumId) async {
     List<TrackSimple> trackList = [];
     final spotify = SpotifyApi(credentials);
