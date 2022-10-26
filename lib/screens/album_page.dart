@@ -1,24 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:spotify/spotify.dart';
+import 'package:jukeboxd/services/remote_services.dart';
+import 'package:flutter/src/widgets/image.dart' as img;
+import 'package:spotify/src/models/_models.dart' as spotiyImg;
+import 'dart:async';
 
-List<String> tracks = [
-  "track 1",
-  "track 2",
-  "track 3",
-  "track 4",
-  "track 5",
-];
-
-class AlbumPage extends StatelessWidget {
+class AlbumPage extends StatefulWidget {
   final String albumId;
   const AlbumPage({Key? key, required this.albumId}) : super(key: key);
+  @override
+  State<AlbumPage> createState() => _AlbumPageState();
+}
+
+class _AlbumPageState extends State<AlbumPage> {
+  Album album = Album();
+  var imageUrl = '';
+
+  void _getAlbum(albumId) {
+    RemoteService().getAlbum(albumId).then((value) {
+      setState(() {
+        album = value!;
+      });
+    });
+  }
+
+  void _getImage(albumId) {
+    RemoteService().getAlbum(albumId).then((value) {
+      setState(() {
+        imageUrl = value!.images!.first.url.toString();
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: Text("Album Title"),
+        title: Text(album.name.toString()),
         centerTitle: true,
       ),
       body: Center(
@@ -37,8 +58,8 @@ class AlbumPage extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: Colors.blueGrey,
                       image: DecorationImage(
-                          image: NetworkImage(
-                              'https://cdn-icons-png.flaticon.com/512/43/43566.png')),
+                        image: NetworkImage(imageUrl),
+                      ),
                     ),
                   ),
                 ],
@@ -61,10 +82,11 @@ class AlbumPage extends StatelessWidget {
                   child: Container(
                     height: 250,
                     child: ListView.builder(
-                      itemCount: tracks.length,
+                      itemCount: album.tracks?.length,
                       itemBuilder: (context, index) {
                         return ListTile(
-                          leading: Text(tracks.elementAt(index).toString()),
+                          leading: Text(
+                              album.tracks!.elementAt(index).name.toString()),
                           trailing: Icon(Icons.star_border_outlined),
                         );
                       },

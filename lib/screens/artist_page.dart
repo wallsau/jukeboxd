@@ -1,32 +1,78 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:spotify/spotify.dart';
+import 'package:jukeboxd/services/remote_services.dart';
+import 'package:flutter/src/widgets/image.dart' as img;
+import 'package:spotify/src/models/_models.dart' as spotiyImg;
+import 'dart:async';
 
-List<String> albums = [
-  'album 1',
-  'album 2',
-  'album 3',
-  'album 4',
-  'album 5',
-];
-
-List<String> songs = [
-  'song 1',
-  'song 2',
-  'song 3',
-  'song 4',
-  'song 5',
-];
-
-class ArtistPage extends StatelessWidget {
+class ArtistPage extends StatefulWidget {
   final String artistId;
-  ArtistPage({Key? key, required this.artistId}) : super(key: key);
+  const ArtistPage({Key? key, required this.artistId}) : super(key: key);
+  @override
+  State<ArtistPage> createState() => _ArtistPageState();
+}
+
+class _ArtistPageState extends State<ArtistPage> {
+  Artist artist = Artist();
+  Iterable topTracks = [];
+  List TrackNames = [];
+  List TestAlbums = [];
+  List artistAlbums = [];
+  var imageUrl = '';
+  var countryCode = 'US';
+
+  void _getArtist(artistId) {
+    RemoteService().getArtist(artistId).then((value) {
+      setState(() {
+        artist = value!;
+      });
+    });
+  }
+
+  void _getTopTracks(artistId, countryCode) {
+    RemoteService().getTopTracks(artistId, countryCode).then((value) {
+      setState(() {
+        topTracks = value;
+        topTracks.toList();
+        TrackNames.add(value.elementAt(0).name);
+        TrackNames.add(value.elementAt(1).name);
+        TrackNames.add(value.elementAt(2).name);
+        TrackNames.add(value.elementAt(3).name);
+        TrackNames.add(value.elementAt(4).name);
+      });
+    });
+  }
+
+  void _getAlbums(artistId) {
+    RemoteService().getArtistAlbums(artistId).then((value) {
+      setState(() {
+        TestAlbums = value;
+        TestAlbums.toList();
+        artistAlbums.add(value[0].name.toString());
+        artistAlbums.add(value[1].name.toString());
+        artistAlbums.add(value[2].name.toString());
+        artistAlbums.add(value[3].name.toString());
+        artistAlbums.add(value[4].name.toString());
+      });
+    });
+  }
+
+  void _getImage(artistId) {
+    RemoteService().getArtist(artistId).then((value) {
+      setState(() {
+        imageUrl = value!.images!.first.url.toString();
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: Text("Album Title"),
+        title: Text(artist.name.toString()),
         centerTitle: true,
       ),
       body: Center(
@@ -45,8 +91,8 @@ class ArtistPage extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: Colors.blueGrey,
                       image: DecorationImage(
-                          image: NetworkImage(
-                              'https://cdn-icons-png.flaticon.com/512/43/43566.png')),
+                        image: NetworkImage(imageUrl),
+                      ),
                     ),
                   ),
                 ],
@@ -61,10 +107,10 @@ class ArtistPage extends StatelessWidget {
                   child: Container(
                     height: 250,
                     child: ListView.builder(
-                      itemCount: albums.length,
+                      itemCount: TrackNames.length,
                       itemBuilder: (context, index) {
                         return ListTile(
-                          leading: Text(albums.elementAt(index).toString()),
+                          leading: Text(TrackNames.elementAt(index).toString()),
                           trailing: Icon(Icons.star_border_outlined),
                         );
                       },
@@ -82,10 +128,11 @@ class ArtistPage extends StatelessWidget {
                   child: Container(
                     height: 250,
                     child: ListView.builder(
-                      itemCount: songs.length,
+                      itemCount: artistAlbums.length,
                       itemBuilder: (context, index) {
+                        final results = artistAlbums[index];
                         return ListTile(
-                          leading: Text(songs.elementAt(index).toString()),
+                          leading: Text(results.toString()),
                           trailing: Icon(Icons.star_border_outlined),
                         );
                       },
