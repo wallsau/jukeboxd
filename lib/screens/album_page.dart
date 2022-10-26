@@ -15,7 +15,7 @@ class AlbumPage extends StatefulWidget {
 
 class _AlbumPageState extends State<AlbumPage> {
   Album album = Album();
-  var albumId = '0qWcLfCZ8wtcoOdX14oGNI';
+
   var imageUrl = '';
 
   void _getAlbum(albumId) {

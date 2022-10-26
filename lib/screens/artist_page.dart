@@ -20,6 +20,7 @@ class _ArtistPageState extends State<ArtistPage> {
   List TestAlbums = [];
   List artistAlbums = [];
   var imageUrl = '';
+
   var countryCode = 'US';
 
   void _getArtist(artistId) {
