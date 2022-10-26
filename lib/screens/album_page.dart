@@ -15,6 +15,7 @@ class AlbumPage extends StatefulWidget {
 
 class _AlbumPageState extends State<AlbumPage> {
   Album album = Album();
+
   var imageUrl = '';
 
   void _getAlbum(albumId) {
@@ -46,6 +47,12 @@ class _AlbumPageState extends State<AlbumPage> {
         child: SingleChildScrollView(
           child: Column(
             children: [
+              ElevatedButton(
+                  onPressed: (() {
+                    _getAlbum(albumId);
+                    _getImage(albumId);
+                  }),
+                  child: Text('Push for album')),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
