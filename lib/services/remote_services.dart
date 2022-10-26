@@ -23,6 +23,15 @@ class RemoteService {
     return track;
   }
 
+  Future<List<Album>> getArtistAlbums(String artistId) async {
+    List<String>? includeGroups = ['album', 'single'];
+    final spotify = SpotifyApi(credentials);
+    final artistAlbums =
+        await spotify.artists.albums(artistId, includeGroups: includeGroups);
+    var albumList = await artistAlbums.all();
+    return albumList.toList();
+  }
+
   Future<List<TrackSimple>?> getAlbumTracks(String albumId) async {
     List<TrackSimple> trackList = [];
     final spotify = SpotifyApi(credentials);
