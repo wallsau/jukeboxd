@@ -4,7 +4,6 @@ import 'package:jukeboxd/screens/song_page.dart';
 import '../services/remote_services.dart';
 import 'package:spotify/spotify.dart';
 import 'package:flutter/src/widgets/image.dart' as img;
-import 'package:spotify/src/models/_models.dart' as spotifyImg;
 import 'dart:async';
 
 import 'album_page.dart';
@@ -151,7 +150,16 @@ class CustomSearchDelegate extends SearchDelegate {
               final result = results[index];
 
               return ListTile(
-                leading: img.Image.asset('images/jukeboxd.jpg'),
+                leading: (result!.type.toString() == 'album' ||
+                        result!.type.toString() == 'artist')
+                    ? img.Image.network(
+                        result!.images![0].url.toString(),
+                        errorBuilder: (BuildContext context, Object exception,
+                            StackTrace? strackTrace) {
+                          return const Text('Error');
+                        },
+                      )
+                    : img.Image.asset('images/jukeboxd.jpg'),
                 title: Text(result!.name.toString()),
                 subtitle: Text(result!.type.toString()),
                 trailing: Text(result!.id.toString()),
