@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:jukeboxd/screens/login_page.dart';
-import 'package:jukeboxd/screens/user_profile.dart';
 import 'package:jukeboxd/utils/colors.dart';
 
 void main() async {
@@ -39,44 +37,3 @@ class MyApp extends StatelessWidget {
         home: LoginPage());
   }
 }
-
-//Scaffold that wraps around whichever page is currently being displayed
-/*class RootPage extends StatefulWidget {
-  const RootPage({super.key});
-
-  @override
-  State<RootPage> createState() => _RootPageState();
-}
-
-class _RootPageState extends State<RootPage> {
-  int currentPage = 0;
-  List<Widget> pages = [
-    LoginPage(),
-    UserProfile(),
-    SearchPage(),
-    AlbumPage(),
-    ArtistPage(),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Jukeboxd'),
-      ),
-      body: pages[currentPage],
-      bottomNavigationBar: NavigationBar(
-        destinations: const [
-          NavigationDestination(icon: Icon(Icons.login), label: 'Login'),
-          NavigationDestination(icon: Icon(Icons.person), label: 'Profile'),
-        ],
-        onDestinationSelected: (int index) {
-          setState(() {
-            currentPage = index;
-          });
-        },
-        selectedIndex: currentPage,
-      ),
-    );
-  }
-}*/

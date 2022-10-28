@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:jukeboxd/screens/user_profile.dart';
 import 'package:jukeboxd/utils/validation.dart';
@@ -21,6 +22,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     User? user = FirebaseAuth.instance.currentUser;
+    var db = FirebaseFirestore.instance;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (user != null) {
@@ -107,10 +109,6 @@ class _LoginPageState extends State<LoginPage> {
                           }
                           setState(() {
                             isLoading = false;
-                            /*if (FirebaseAuth.instance.currentUser != null) {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => UserProfile()));
-                            }*/
                           });
                         }
                       },
@@ -170,7 +168,20 @@ class _LoginPageState extends State<LoginPage> {
                                   .createUserWithEmailAndPassword(
                                 email: nameController.text,
                                 password: passwordController.text,
-                              );
+                              )
+                                  .then((userCredential) {
+                                var userUid = userCredential.user!.uid;
+                                var email = userCredential.user!.email;
+
+                                final userAccount = <String, String?>{
+                                  'email': email,
+                                };
+                                //Create user account document with userUid as the document id
+                                db
+                                    .collection('accounts')
+                                    .doc(userUid)
+                                    .set(userAccount);
+                              });
                             } on FirebaseAuthException catch (error) {
                               errorMessage = error.message!;
                             }

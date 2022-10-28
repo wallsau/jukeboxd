@@ -42,6 +42,7 @@ dependencies:
   flutter_rating_bar: ^4.0.1
   flutter_dotenv: ^5.0.2
   spotify: ^0.8.0
+  cloud_firestore: ^3.5.1
 
 dev_dependencies:
   flutter_test:
