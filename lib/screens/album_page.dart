@@ -3,8 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:spotify/spotify.dart';
 import 'package:jukeboxd/services/remote_services.dart';
 import 'package:flutter/src/widgets/image.dart' as img;
-import 'package:spotify/src/models/_models.dart' as spotiyImg;
-import 'dart:async';
 
 class AlbumPage extends StatefulWidget {
   final String albumId;
@@ -15,23 +13,21 @@ class AlbumPage extends StatefulWidget {
 
 class _AlbumPageState extends State<AlbumPage> {
   Album album = Album();
-
   var imageUrl = '';
 
   void _getAlbum(albumId) {
     RemoteService().getAlbum(albumId).then((value) {
       setState(() {
         album = value!;
+        imageUrl = value!.images!.first.url.toString();
       });
     });
   }
 
-  void _getImage(albumId) {
-    RemoteService().getAlbum(albumId).then((value) {
-      setState(() {
-        imageUrl = value!.images!.first.url.toString();
-      });
-    });
+  @override
+  void initState() {
+    super.initState();
+    _getAlbum(widget.albumId);
   }
 
   @override

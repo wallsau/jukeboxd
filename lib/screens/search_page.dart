@@ -16,8 +16,6 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
-  SearchCategory? category = SearchCategory.artist;
-
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -41,35 +39,8 @@ class _SearchPageState extends State<SearchPage> {
       body: Container(
         width: screenWidth,
         child: Column(
-          children: <Widget>[
-            const Center(child: Text('Select Search Type: ')),
-            RadioListTile<SearchCategory>(
-                title: const Text('artist'),
-                value: SearchCategory.artist,
-                groupValue: category,
-                onChanged: (SearchCategory? value) {
-                  setState(() {
-                    category = value;
-                  });
-                }),
-            RadioListTile<SearchCategory>(
-                title: const Text('album'),
-                value: SearchCategory.album,
-                groupValue: category,
-                onChanged: (SearchCategory? value) {
-                  setState(() {
-                    category = value;
-                  });
-                }),
-            RadioListTile<SearchCategory>(
-                title: const Text('song'),
-                value: SearchCategory.track,
-                groupValue: category,
-                onChanged: (SearchCategory? value) {
-                  setState(() {
-                    category = value;
-                  });
-                }),
+          children: const <Widget>[
+            Center(child: Text('Select Search Type: ')),
           ],
         ),
       ),
@@ -112,7 +83,7 @@ class CustomSearchDelegate extends SearchDelegate {
   Widget buildResults(BuildContext context) => Container(
         color: Colors.black,
         child: FutureBuilder<List<dynamic>?>(
-            future: RemoteService().search(query, 12),
+            future: RemoteService().search(query, 3),
             builder: (context, snapshot) {
               if (query.isEmpty) return buildNoMatches();
 
@@ -150,8 +121,7 @@ class CustomSearchDelegate extends SearchDelegate {
               final result = results[index];
 
               return ListTile(
-                leading: (result!.type.toString() == 'album' ||
-                        result!.type.toString() == 'artist')
+                leading: (result!.type.toString() != 'track')
                     ? img.Image.network(
                         result!.images![0].url.toString(),
                         errorBuilder: (BuildContext context, Object exception,
@@ -240,8 +210,6 @@ class CustomSearchDelegate extends SearchDelegate {
         );
       }));*/
 }
-
-enum SearchCategory { artist, album, track }
 
 class Debouncer {
   final Duration delay;

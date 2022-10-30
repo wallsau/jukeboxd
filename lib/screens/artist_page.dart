@@ -27,6 +27,7 @@ class _ArtistPageState extends State<ArtistPage> {
     RemoteService().getArtist(artistId).then((value) {
       setState(() {
         artist = value!;
+        imageUrl = value!.images!.first.url.toString();
       });
     });
   }
@@ -59,16 +60,14 @@ class _ArtistPageState extends State<ArtistPage> {
     });
   }
 
-  void _getImage(artistId) {
-    RemoteService().getArtist(artistId).then((value) {
-      setState(() {
-        imageUrl = value!.images!.first.url.toString();
-      });
-    });
+  @override
+  void initState() {
+    super.initState();
+    _getArtist(widget.artistId);
+    _getTopTracks(widget.artistId, 'US');
+    _getAlbums(widget.artistId);
   }
 
-  @override
-  void initState() {}
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
