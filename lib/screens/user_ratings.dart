@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:jukeboxd/utils/cust_widgets.dart';
+import 'package:jukeboxd/utils/custom_widgets/user_page_widgets.dart';
 
 class UserRatings extends StatelessWidget {
   UserRatings({required this.title, super.key});

@@ -1,9 +1,10 @@
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:jukeboxd/utils/colors.dart';
-import 'package:jukeboxd/utils/cust_widgets.dart';
+//import 'package:jukeboxd/utils/cust_widgets.dart';
+import 'package:jukeboxd/utils/custom_widgets/result_page_widgets.dart';
+import 'package:jukeboxd/utils/custom_widgets/rating_widget.dart';
 import '../services/firebase.dart';
 import '../services/remote_services.dart';
 import 'package:spotify/spotify.dart';
@@ -24,6 +25,7 @@ class _SongPageState extends State<SongPage> {
   String review = '';
   late Track? track = Track();
   String artistList = '';
+  var imageUrl = '';
 
   void _getTrack(trackId) {
     RemoteService().getTrack(trackId).then((value) {
@@ -80,7 +82,7 @@ class _SongPageState extends State<SongPage> {
         child: SingleChildScrollView(
           child: Center(
             child: Column(children: [
-              CoverImage(),
+              SongImage(),
               RateBar(
                 initRating: rating,
                 ignoreChange: false,

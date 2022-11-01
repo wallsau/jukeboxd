@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jukeboxd/screens/search_page.dart';
 import 'package:jukeboxd/utils/colors.dart';
-import 'package:jukeboxd/utils/cust_widgets.dart';
-import 'package:jukeboxd/screens/song_page.dart';
+import 'package:jukeboxd/utils/custom_widgets/user_page_widgets.dart';
 
 class UserProfile extends StatefulWidget {
   UserProfile({super.key});

@@ -6,6 +6,7 @@ import 'package:flutter/src/widgets/image.dart' as img;
 import 'package:spotify/src/models/_models.dart' as spotiyImg;
 import 'dart:async';
 import 'package:jukeboxd/utils/colors.dart';
+import 'package:jukeboxd/utils/custom_widgets/result_page_widgets.dart';
 
 class ArtistPage extends StatefulWidget {
   final String artistId;
@@ -81,119 +82,9 @@ class _ArtistPageState extends State<ArtistPage> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 200.0,
-                    height: 200.0,
-                    padding: EdgeInsets.all(10.0),
-                    margin: EdgeInsets.all(10.0),
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: Colors.blueGrey,
-                      image: DecorationImage(
-                        image: NetworkImage(imageUrl),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(40.0),
-                    color: purple,
-                  ),
-                  child: Column(
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.only(top: 5.0),
-                        child: Text(
-                          "Songs",
-                          style: TextStyle(
-                            fontSize: 20.0,
-                            fontStyle: FontStyle.italic,
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          height: 250,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30.0),
-                            color: iconsGray,
-                          ),
-                          child: ListView.builder(
-                            padding:
-                                const EdgeInsets.only(top: 2.0, bottom: 2.0),
-                            itemCount: TrackNames.length,
-                            itemBuilder: (context, index) {
-                              return ListTile(
-                                leading: Text(
-                                  TrackNames.elementAt(index).toString(),
-                                  style: const TextStyle(
-                                    color: purple,
-                                  ),
-                                ),
-                                trailing: Icon(Icons.star_border_outlined),
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(40.0),
-                    color: purple,
-                  ),
-                  child: Column(
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.only(top: 5.0),
-                        child: Text(
-                          "Albums",
-                          style: TextStyle(
-                            fontSize: 20.0,
-                            fontStyle: FontStyle.italic,
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30.0),
-                            color: iconsGray,
-                          ),
-                          height: 250,
-                          child: ListView.builder(
-                            itemCount: artistAlbums.length,
-                            itemBuilder: (context, index) {
-                              final results = artistAlbums[index];
-                              return ListTile(
-                                leading: Text(
-                                  results.toString(),
-                                  style: TextStyle(color: purple),
-                                ),
-                                trailing: Icon(Icons.star_border_outlined),
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              CoverImage(imageUrl: imageUrl),
+              ArtistList(title: 'Songs', musicCollection: TrackNames),
+              ArtistList(title: 'Albums', musicCollection: artistAlbums),
             ],
           ),
         ),
