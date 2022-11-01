@@ -5,7 +5,7 @@ import '../services/remote_services.dart';
 import 'package:spotify/spotify.dart';
 import 'package:flutter/src/widgets/image.dart' as img;
 import 'dart:async';
-
+import 'package:jukeboxd/utils/colors.dart';
 import 'album_page.dart';
 
 class SearchPage extends StatefulWidget {
@@ -21,7 +21,7 @@ class _SearchPageState extends State<SearchPage> {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      backgroundColor: Colors.purple,
+      backgroundColor: purple,
       appBar: AppBar(
         backgroundColor: Colors.black,
         actions: [
