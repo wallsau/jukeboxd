@@ -68,30 +68,4 @@ class RemoteService {
     }
     return searchList;
   }
-
-  /*Future<List<TrackSimple>?> searchTrack(String searchQuery, int limit) async {
-    List<TrackSimple> searchList = [];
-    final spotify = SpotifyApi(credentials);
-    var search = await spotify.search
-        .get(searchQuery, types: [SearchType.track]).first(limit);
-    for (var pages in search) {
-      for (var item in pages.items!) {
-        searchList.add(item);
-      }
-    }
-    return searchList;
-  }
-
-  Future<List<AlbumSimple>?> searchAlbum(String searchQuery, int limit) async {
-    List<AlbumSimple> searchList = [];
-    final spotify = SpotifyApi(credentials);
-    var search = await spotify.search
-        .get(searchQuery, types: [SearchType.album]).first(limit);
-    for (var pages in search) {
-      for (var item in pages.items!) {
-        searchList.add(item);
-      }
-    }
-    return searchList;
-  }*/
 }

@@ -1,6 +1,10 @@
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:jukeboxd/utils/colors.dart';
 import 'package:jukeboxd/utils/cust_widgets.dart';
+import '../services/firebase.dart';
 import '../services/remote_services.dart';
 import 'package:spotify/spotify.dart';
 
@@ -16,10 +20,12 @@ class SongPage extends StatefulWidget {
 }
 
 class _SongPageState extends State<SongPage> {
+  double rating = 0.0;
+  String review = '';
   late Track? track = Track();
   String artistList = '';
 
-  void _getAlbum(trackId) {
+  void _getTrack(trackId) {
     RemoteService().getTrack(trackId).then((value) {
       setState(() {
         track = value;
@@ -34,10 +40,28 @@ class _SongPageState extends State<SongPage> {
     });
   }
 
+  Future _getInitRating() async {
+    await FirebaseFirestore.instance
+        .collection('accounts')
+        .doc(DataBase().getUid())
+        .collection('track')
+        .doc(widget.trackId)
+        .get()
+        .then((snapshot) async {
+      if (snapshot.exists) {
+        setState(() {
+          rating = snapshot.data()!['rating'];
+          review = snapshot.data()!['review'];
+        });
+      }
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-    _getAlbum(widget.trackId);
+    _getTrack(widget.trackId);
+    _getInitRating();
   }
 
   @override
@@ -58,12 +82,18 @@ class _SongPageState extends State<SongPage> {
             child: Column(children: [
               CoverImage(),
               RateBar(
-                initRating: 0.0,
+                initRating: rating,
                 ignoreChange: false,
                 starSize: 50.0,
+                id: widget.trackId,
+                type: (artistList.isEmpty) ? 'track' : track!.type!,
               ),
-              SlimReviewWidget(),
-              //BlockReviewWidget(), //Alternate review widget; there will be only one review widget normally
+              //SlimReviewWidget(),
+              BlockReviewWidget(
+                id: widget.trackId,
+                type: track!.type,
+                initReview: review,
+              ), //Alternate review widget; there will be only one review widget normally
               InfoBlock(
                 title: (artistList.isEmpty) ? 'Placeholder' : track!.name!,
                 artist: artistList,

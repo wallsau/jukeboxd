@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:jukeboxd/screens/user_ratings.dart';
 import 'package:jukeboxd/screens/user_reviews.dart';
+import 'package:jukeboxd/services/firebase.dart';
 import 'package:jukeboxd/utils/colors.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
@@ -91,11 +94,30 @@ class SlimReviewWidget extends StatelessWidget {
 
 //Alternative review function widget with a submit and delete (nonfunctional)
 //Located on these pages: song, album
-class BlockReviewWidget extends StatelessWidget {
-  const BlockReviewWidget({super.key});
+class BlockReviewWidget extends StatefulWidget {
+  BlockReviewWidget(
+      {required this.id, required this.type, this.initReview, super.key});
+  final String id;
+  final String? type;
+  String? initReview;
+  @override
+  State<BlockReviewWidget> createState() => _BlockReviewWidgetState();
+}
+
+class _BlockReviewWidgetState extends State<BlockReviewWidget> {
+  final TextEditingController _controller = TextEditingController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (widget.initReview != null) {
+      _controller.text = widget.initReview!;
+    }
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
@@ -113,15 +135,16 @@ class BlockReviewWidget extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10.0),
                     color: iconsGray,
                   ),
-                  child: const TextField(
+                  child: TextField(
+                    controller: _controller,
                     cursorColor: purple,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       border: InputBorder.none,
                       labelText: "Your review",
                       labelStyle: TextStyle(color: purple),
                       contentPadding: EdgeInsets.all(8.0),
                     ),
-                    style: TextStyle(fontSize: 20.0),
+                    style: const TextStyle(fontSize: 20.0),
                     maxLines: 3,
                   ),
                 ),
@@ -137,7 +160,10 @@ class BlockReviewWidget extends StatelessWidget {
                       color: iconsGray,
                     ),
                     child: TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        DataBase().setReview(
+                            _controller.text, widget.id, widget.type);
+                      },
                       child: const Text(
                         'Submit',
                         style: TextStyle(color: purple),
@@ -153,7 +179,9 @@ class BlockReviewWidget extends StatelessWidget {
                       color: buttonRed,
                     ),
                     child: TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        DataBase().deleteReview(widget.id, widget.type);
+                      },
                       child: const Text(
                         'Delete',
                         style: TextStyle(color: bbarGray),
@@ -366,22 +394,33 @@ class _InfoBlockState extends State<InfoBlock> {
 //Interactable flutter_rating_bar plug-in
 //Located on these pages: song, album
 class RateBar extends StatefulWidget {
-  const RateBar({
+  RateBar({
     required this.initRating,
     required this.ignoreChange,
     required this.starSize,
+    this.id,
+    this.type,
     super.key,
   });
-  final double initRating;
+  double initRating;
   final bool ignoreChange;
   final double starSize;
+  final String? id;
+  final String? type;
 
   @override
   State<RateBar> createState() => _RateBarState();
 }
 
 class _RateBarState extends State<RateBar> {
-  double? _ratingValue;
+  Timer? _debounce;
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return RatingBar(
@@ -399,7 +438,11 @@ class _RateBarState extends State<RateBar> {
         ),
         onRatingUpdate: (value) {
           setState(() {
-            _ratingValue = value;
+            if (_debounce?.isActive ?? false) _debounce?.cancel();
+            _debounce = Timer(const Duration(seconds: 1), () {
+              DataBase().setRating(value, widget.id!, widget.type);
+              widget.initRating = value;
+            });
           });
         });
   }
