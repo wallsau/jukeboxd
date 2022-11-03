@@ -38,7 +38,6 @@ class _UserProfileState extends State<UserProfile> {
       ),
       body: GestureDetector(
         onTap: () {
-          //here
           FocusScope.of(context).unfocus();
           TextEditingController().clear();
         },

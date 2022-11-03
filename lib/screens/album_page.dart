@@ -18,6 +18,8 @@ class _AlbumPageState extends State<AlbumPage> {
   double rating = 0.0;
   String review = '';
   var imageUrl = '';
+  Map allRatings = {};
+  double avgRating = 0.0;
 
   void _getAlbum(albumId) {
     RemoteService().getAlbum(albumId).then((value) {
@@ -45,11 +47,33 @@ class _AlbumPageState extends State<AlbumPage> {
     });
   }
 
+  Future _getInitRatingMap(String id) async {
+    await FirebaseFirestore.instance
+        .collection('albums')
+        .doc(id)
+        .get()
+        .then((snapshot) async {
+      if (snapshot.exists) {
+        setState(() {
+          allRatings = snapshot.data()!['allRatings'];
+          allRatings.forEach((key, value) {
+            avgRating += value;
+          });
+          avgRating =
+              double.parse((avgRating / allRatings.length).toStringAsFixed(2));
+        });
+      } else {
+        avgRating = 0.0;
+      }
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     _getAlbum(widget.albumId);
     _getInitRating();
+    _getInitRatingMap('albumid');
   }
 
   @override
@@ -89,9 +113,11 @@ class _AlbumPageState extends State<AlbumPage> {
                   title: album.name,
                   imageUrl: (album.name == null) ? '' : album.images!.first.url,
                 ),
-                /*InfoBlock(
-                    title: album.name.toString(),
-                    artist: album.artists.toString()),*/
+                InfoBlock(
+                  title: album.name.toString(),
+                  artist: album.artists.toString(),
+                  avgRating: avgRating,
+                ),
                 AlbumList(album: album),
                 ReviewSection(numComments: 10),
               ],

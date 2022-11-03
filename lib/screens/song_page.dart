@@ -24,6 +24,8 @@ class _SongPageState extends State<SongPage> {
   double rating = 0.0;
   String review = '';
   late Track? track = Track();
+  double avgRating = 0.0;
+  Map allRatings = {};
   String artistList = '';
   var imageUrl = '';
 
@@ -59,11 +61,33 @@ class _SongPageState extends State<SongPage> {
     });
   }
 
+  Future _getInitRatingMap(String id) async {
+    await FirebaseFirestore.instance
+        .collection('songs')
+        .doc(id)
+        .get()
+        .then((snapshot) async {
+      if (snapshot.exists) {
+        setState(() {
+          allRatings = snapshot.data()!['allRatings'];
+          allRatings.forEach((key, value) {
+            avgRating += value;
+          });
+          avgRating =
+              double.parse((avgRating / allRatings.length).toStringAsFixed(2));
+        });
+      } else {
+        avgRating = 0.0;
+      }
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     _getTrack(widget.trackId);
     _getInitRating();
+    _getInitRatingMap('trackid');
   }
 
   @override
@@ -103,7 +127,7 @@ class _SongPageState extends State<SongPage> {
               InfoBlock(
                 title: (artistList.isEmpty) ? 'Loading...' : track!.name!,
                 artist: artistList,
-                avgRating: 0,
+                avgRating: avgRating,
               ),
               ReviewSection(numComments: 5),
             ]),
