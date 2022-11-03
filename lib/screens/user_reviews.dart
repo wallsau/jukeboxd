@@ -12,7 +12,10 @@ class UserReviews extends StatelessWidget {
         body: SingleChildScrollView(
           child: Center(
               child: Column(
-            children: [UserReviewList(numRatings: 20, title: title)],
+            children: [
+              UserReviewList(title: title, type: 'track'),
+              UserReviewList(title: title, type: 'album')
+            ],
           )),
         ));
   }

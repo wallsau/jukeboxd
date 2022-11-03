@@ -167,10 +167,15 @@ class AlbumList extends StatelessWidget {
 //Located on these pages: song_page, album_page
 class BlockReviewWidget extends StatefulWidget {
   BlockReviewWidget(
-      {required this.id, required this.type, this.initReview, super.key});
+      {required this.title,
+      required this.artist,
+      required this.id,
+      required this.type,
+      this.initReview,
+      this.imageUrl = '',
+      super.key});
   final String id;
-  final String? type;
-  final String? initReview;
+  final String? type, initReview, title, artist, imageUrl;
   @override
   State<BlockReviewWidget> createState() => _BlockReviewWidgetState();
 }
@@ -233,7 +238,12 @@ class _BlockReviewWidgetState extends State<BlockReviewWidget> {
                     child: TextButton(
                       onPressed: () {
                         DataBase().setReview(
-                            _controller.text, widget.id, widget.type);
+                            _controller.text,
+                            widget.id,
+                            widget.type,
+                            widget.title,
+                            widget.artist,
+                            widget.imageUrl);
                       },
                       child: const Text(
                         'Submit',

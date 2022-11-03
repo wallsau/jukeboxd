@@ -3,6 +3,8 @@ import 'package:spotify/spotify.dart';
 import 'package:jukeboxd/services/remote_services.dart';
 import 'package:jukeboxd/utils/custom_widgets/result_page_widgets.dart';
 import 'package:jukeboxd/utils/custom_widgets/rating_widget.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../services/firebase.dart';
 
 class AlbumPage extends StatefulWidget {
   final String albumId;
@@ -13,6 +15,8 @@ class AlbumPage extends StatefulWidget {
 
 class _AlbumPageState extends State<AlbumPage> {
   Album album = Album();
+  double rating = 0.0;
+  String review = '';
   var imageUrl = '';
 
   void _getAlbum(albumId) {
@@ -24,10 +28,28 @@ class _AlbumPageState extends State<AlbumPage> {
     });
   }
 
+  Future _getInitRating() async {
+    await FirebaseFirestore.instance
+        .collection('accounts')
+        .doc(DataBase().getUid())
+        .collection('album')
+        .doc(widget.albumId)
+        .get()
+        .then((snapshot) async {
+      if (snapshot.exists) {
+        setState(() {
+          rating = snapshot.data()!['rating'];
+          review = snapshot.data()!['review'];
+        });
+      }
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     _getAlbum(widget.albumId);
+    _getInitRating();
   }
 
   @override
@@ -51,14 +73,21 @@ class _AlbumPageState extends State<AlbumPage> {
               children: [
                 CoverImage(imageUrl: imageUrl),
                 RateBar(
-                  initRating: 0.0,
+                  initRating: rating,
                   ignoreChange: false,
                   starSize: 50.0,
+                  id: widget.albumId,
+                  type: 'album',
                 ),
                 BlockReviewWidget(
-                  id: album.id.toString(),
-                  type: '',
-                  initReview: '',
+                  id: widget.albumId,
+                  type: album.type,
+                  initReview: review,
+                  artist: (album.name == null)
+                      ? ''
+                      : album.artists![0].name.toString(),
+                  title: album.name,
+                  imageUrl: (album.name == null) ? '' : album.images!.first.url,
                 ),
                 /*InfoBlock(
                     title: album.name.toString(),

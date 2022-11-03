@@ -1,7 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:jukeboxd/screens/search_page.dart';
 import 'package:jukeboxd/utils/colors.dart';
 import 'package:jukeboxd/utils/custom_widgets/user_page_widgets.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+
+import '../services/firebase.dart';
 
 class UserProfile extends StatefulWidget {
   UserProfile({super.key});
@@ -43,7 +47,38 @@ class _UserProfileState extends State<UserProfile> {
             child: Column(children: [
               /*Widgets to build out the profile*/
               UserHeader(username: "MyUser"),
-              Top5(),
+              StreamBuilder(
+                stream: FirebaseFirestore.instance
+                    .collection('accounts')
+                    .doc(DataBase().getUid())
+                    .collection('album')
+                    .orderBy('rating')
+                    .limit(5)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return Container(
+                      child: const Center(
+                        child: Text('No Data'),
+                      ),
+                    );
+                  }
+                  if (snapshot.data!.size < 5) {
+                    return Top5(
+                        pic1: 'https://via.placeholder.com/150',
+                        pic2: 'https://via.placeholder.com/150',
+                        pic3: 'https://via.placeholder.com/150',
+                        pic4: 'https://via.placeholder.com/150',
+                        pic5: 'https://via.placeholder.com/150');
+                  }
+                  return Top5(
+                      pic1: snapshot.data!.docs[0]['imageUrl'],
+                      pic2: snapshot.data!.docs[1]['imageUrl'],
+                      pic3: snapshot.data!.docs[2]['imageUrl'],
+                      pic4: snapshot.data!.docs[3]['imageUrl'],
+                      pic5: snapshot.data!.docs[4]['imageUrl']);
+                },
+              ),
               //UserMenu(),
               ProfileMenu(
                   toAlbumRatings: "MY ALBUMS",

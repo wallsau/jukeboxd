@@ -6,6 +6,8 @@ import 'package:jukeboxd/screens/user_ratings.dart';
 import 'package:jukeboxd/screens/user_reviews.dart';
 import 'package:jukeboxd/utils/colors.dart';
 import 'package:jukeboxd/utils/custom_widgets/rating_widget.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 //User profile picture and name
 /*Will need to replace AssetImages later*/
@@ -49,18 +51,18 @@ class UserHeader extends StatelessWidget {
 //Located on these pages: user_profile
 class Top5 extends StatefulWidget {
   Top5({
-    this.pic1 = const AssetImage("images/portrait_default.png"),
-    this.pic2 = const AssetImage("images/portrait_default.png"),
-    this.pic3 = const AssetImage("images/portrait_default.png"),
-    this.pic4 = const AssetImage("images/portrait_default.png"),
-    this.pic5 = const AssetImage("images/portrait_default.png"),
+    required this.pic1,
+    required this.pic2,
+    required this.pic3,
+    required this.pic4,
+    required this.pic5,
     super.key,
   });
-  AssetImage? pic1;
-  AssetImage? pic2;
-  AssetImage? pic3;
-  AssetImage? pic4;
-  AssetImage? pic5;
+  final String pic1;
+  final String pic2;
+  final String pic3;
+  final String pic4;
+  final String pic5;
 
   @override
   State<Top5> createState() => _Top5State();
@@ -89,41 +91,38 @@ class _Top5State extends State<Top5> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Expanded(
-                child: Image(
-                  image: widget.pic1 as ImageProvider,
-                  width: 50.0,
-                  height: 50.0,
-                ),
+              CachedNetworkImage(
+                imageUrl: widget.pic1,
+                placeholder: (context, url) => CircularProgressIndicator(),
+                errorWidget: (context, url, error) => Icon(Icons.error),
               ),
-              Expanded(
-                child: Image(
-                  image: widget.pic2 as ImageProvider,
-                  width: 50.0,
-                  height: 50.0,
-                ),
+              CachedNetworkImage(
+                imageUrl: widget.pic2,
+                placeholder: (context, url) => CircularProgressIndicator(),
+                errorWidget: (context, url, error) => Icon(Icons.error),
               ),
-              Expanded(
-                child: Image(
-                  image: widget.pic3 as ImageProvider,
-                  width: 50.0,
-                  height: 50.0,
-                ),
+              CachedNetworkImage(
+                imageUrl: widget.pic3,
+                placeholder: (context, url) => CircularProgressIndicator(),
+                errorWidget: (context, url, error) => Icon(Icons.error),
               ),
-              Expanded(
-                child: Image(
-                  image: widget.pic4 as ImageProvider,
-                  width: 50.0,
-                  height: 50.0,
-                ),
+              CachedNetworkImage(
+                imageUrl: widget.pic4,
+                placeholder: (context, url) => CircularProgressIndicator(),
+                errorWidget: (context, url, error) => Icon(Icons.error),
               ),
-              Expanded(
+              CachedNetworkImage(
+                imageUrl: widget.pic5,
+                placeholder: (context, url) => CircularProgressIndicator(),
+                errorWidget: (context, url, error) => Icon(Icons.error),
+              ),
+              /*Expanded(
                 child: Image(
                   image: widget.pic5 as ImageProvider,
                   width: 50.0,
                   height: 50.0,
                 ),
-              ),
+              ),*/
             ],
           ),
         ),
@@ -178,6 +177,7 @@ class _ProfileMenuState extends State<ProfileMenu> {
                   MaterialPageRoute(
                     builder: (context) => UserRatings(
                       title: widget.toAlbumRatings,
+                      type: 'album',
                     ),
                   ),
                 );
@@ -203,6 +203,7 @@ class _ProfileMenuState extends State<ProfileMenu> {
                   MaterialPageRoute(
                       builder: (context) => UserRatings(
                             title: widget.toSongRatings,
+                            type: 'track',
                           )),
                 );
               },
@@ -243,8 +244,12 @@ class _ProfileMenuState extends State<ProfileMenu> {
 //Located on these pages: user_ratings
 class UserList extends StatefulWidget {
   final int numRatings;
-  final String title;
-  UserList({required this.numRatings, required this.title, super.key});
+  final String title, type;
+  UserList(
+      {required this.numRatings,
+      required this.title,
+      required this.type,
+      super.key});
 
   @override
   State<UserList> createState() => _UserListState();
@@ -263,14 +268,31 @@ class _UserListState extends State<UserList> {
             borderRadius: BorderRadius.circular(10.0),
             color: purple,
           ),
-          child: Column(
-            children: List.generate(
-              widget.numRatings,
-              (index) => TitleAndRating(
-                rating: index % 5,
-                artist: index.toString(),
-              ),
-            ),
+          child: StreamBuilder(
+            stream: FirebaseFirestore.instance
+                .collection('accounts')
+                .doc(DataBase().getUid())
+                .collection(widget.type)
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return Container(
+                  child: const Center(
+                    child: Text('No Data'),
+                  ),
+                );
+              }
+              return Column(
+                children: List.generate(
+                  snapshot.data!.size,
+                  (index) => TitleAndRating(
+                    rating: snapshot.data!.docs[index]['rating'],
+                    trackTitle: snapshot.data!.docs[index]['title'],
+                    artist: snapshot.data!.docs[index]['artist'],
+                  ),
+                ),
+              );
+            },
           ),
         ),
       )
@@ -281,9 +303,8 @@ class _UserListState extends State<UserList> {
 //Creates the main container for holding the user's reviews
 //Located on these pages: user_reviews
 class UserReviewList extends StatefulWidget {
-  final int numRatings;
-  final String title;
-  UserReviewList({required this.numRatings, required this.title, super.key});
+  final String title, type;
+  UserReviewList({required this.title, required this.type, super.key});
 
   @override
   State<UserReviewList> createState() => _UserReviewListState();
@@ -302,14 +323,29 @@ class _UserReviewListState extends State<UserReviewList> {
             borderRadius: BorderRadius.circular(10.0),
             color: purple,
           ),
-          child: Column(
-            children: List.generate(
-              widget.numRatings,
-              (index) => TitleAndReview(
-                reviewText: '$index My Review',
-                artist: index.toString(),
-              ),
-            ),
+          child: StreamBuilder(
+            stream: FirebaseFirestore.instance
+                .collection('accounts')
+                .doc(DataBase().getUid())
+                .collection(widget.type)
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return Container(
+                  child: const Center(child: Text('No Data')),
+                );
+              }
+              return Column(
+                children: List.generate(
+                  snapshot.data!.size,
+                  (index) => TitleAndReview(
+                    reviewText: snapshot.data!.docs[index]['review'],
+                    trackTitle: snapshot.data!.docs[index]['title'],
+                    artist: snapshot.data!.docs[index]['artist'],
+                  ),
+                ),
+              );
+            },
           ),
         ),
       )

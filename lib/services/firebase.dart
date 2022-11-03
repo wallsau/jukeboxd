@@ -11,11 +11,26 @@ class DataBase {
     return uid;
   }
 
-  void setReview(String review, String objectId, String? type) async {
+  void setReview(String review, String objectId, String? type, String? title,
+      String? artist, String? imageUrl) async {
     String userId = getUid();
-    final reviewMap = <String, String>{
-      'review': review,
-    };
+
+    var reviewMap = <String, String>{};
+    if (imageUrl!.isEmpty) {
+      reviewMap = <String, String>{
+        'artist': artist!,
+        'title': title!,
+        'review': review,
+      };
+    } else {
+      reviewMap = <String, String>{
+        'artist': artist!,
+        'title': title!,
+        'review': review,
+        'imageUrl': imageUrl
+      };
+    }
+
     final docRef =
         db.collection('accounts').doc(userId).collection(type!).doc(objectId);
     await docRef.set(reviewMap, SetOptions(merge: true));

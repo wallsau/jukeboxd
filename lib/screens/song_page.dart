@@ -95,9 +95,13 @@ class _SongPageState extends State<SongPage> {
                 id: widget.trackId,
                 type: track!.type,
                 initReview: review,
+                artist: (artistList.isEmpty)
+                    ? ''
+                    : track!.artists![0].name.toString(),
+                title: (artistList.isEmpty) ? '' : track!.name,
               ), //Alternate review widget; there will be only one review widget normally
               InfoBlock(
-                title: (artistList.isEmpty) ? 'Placeholder' : track!.name!,
+                title: (artistList.isEmpty) ? 'Loading...' : track!.name!,
                 artist: artistList,
                 avgRating: 0,
               ),
