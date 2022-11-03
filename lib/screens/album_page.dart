@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:spotify/spotify.dart';
 import 'package:jukeboxd/services/remote_services.dart';
-import 'package:flutter/src/widgets/image.dart' as img;
 import 'package:jukeboxd/utils/custom_widgets/result_page_widgets.dart';
 import 'package:jukeboxd/utils/custom_widgets/rating_widget.dart';
 
@@ -34,11 +32,12 @@ class _AlbumPageState extends State<AlbumPage> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: Text(album.name.toString()),
+        title: (album.name == null)
+            ? const Text('Loading...')
+            : Text(album.name.toString()),
         centerTitle: true,
       ),
       body: GestureDetector(
@@ -46,8 +45,8 @@ class _AlbumPageState extends State<AlbumPage> {
           FocusScope.of(context).unfocus();
           TextEditingController().clear();
         },
-        child: Center(
-          child: SingleChildScrollView(
+        child: SingleChildScrollView(
+          child: Center(
             child: Column(
               children: [
                 CoverImage(imageUrl: imageUrl),

@@ -142,13 +142,17 @@ class AlbumList extends StatelessWidget {
           borderRadius: BorderRadius.circular(40.0),
           color: purple,
         ),
-        child: Container(
+        child: SizedBox(
           height: 250,
           child: ListView.builder(
+            shrinkWrap: true,
             itemCount: album.tracks?.length,
             itemBuilder: (context, index) {
               return ListTile(
-                leading: Text(album.tracks!.elementAt(index).name.toString()),
+                leading: SizedBox(
+                    width: 200,
+                    child:
+                        Text(album.tracks!.elementAt(index).name.toString())),
                 trailing: Icon(Icons.star_border_outlined),
               );
             },
@@ -308,6 +312,7 @@ class _ReviewSectionState extends State<ReviewSection> {
             Column(
               children: List.generate(
                   widget.numComments,
+                  growable: false,
                   (index) => ReviewComment(
                         username: "username$index",
                         text: '\n1\n2\n3\n4\n5',
