@@ -43,7 +43,7 @@ class CoverImage extends StatelessWidget {
 class SongImage extends StatelessWidget {
   final AssetImage titleImage;
   const SongImage({
-    this.titleImage = const AssetImage("images/portrait_default.png"),
+    this.titleImage = const AssetImage("images/jukeboxd.jpg"),
     Key? key,
   }) : super(key: key);
 
@@ -283,10 +283,10 @@ class _BlockReviewWidgetState extends State<BlockReviewWidget> {
 //Container to hold comments
 //Located on these pages: song, album
 class ReviewSection extends StatefulWidget {
-  final int numComments;
-  final List? comments;
+  //final int numComments;
+  final Map? comments;
   ReviewSection({
-    required this.numComments,
+    //required this.numComments,
     this.comments,
     Key? key,
   }) : super(key: key);
@@ -319,15 +319,28 @@ class _ReviewSectionState extends State<ReviewSection> {
                     fontSize: 20.0),
               ),
             ),
-            Column(
-              children: List.generate(
-                  widget.numComments,
-                  growable: false,
-                  (index) => ReviewComment(
-                        username: "username$index",
-                        text: '\n1\n2\n3\n4\n5',
-                      )),
-            ),
+            SizedBox(
+              height: 300.0,
+              child: ListView.builder(
+                itemCount: widget.comments?.length ?? 0,
+                itemBuilder: (BuildContext context, int index) {
+                  String key = widget.comments?.keys.elementAt(index);
+                  return ReviewComment(
+                    username: key,
+                    text: widget.comments?[key] ?? 'Sample',
+                  );
+                },
+              ),
+            )
+            // Column(
+            //   children: List.generate(
+            //       widget.comments?.length ?? 0,
+            //       growable: true,
+            //       (index) => ReviewComment(
+            //             username: "username$index",
+            //             text: '\n1\n2\n3\n4\n5',
+            //           )),
+            // ),
           ],
         ),
       ),

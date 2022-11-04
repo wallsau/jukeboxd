@@ -19,6 +19,7 @@ class _AlbumPageState extends State<AlbumPage> {
   String review = '';
   var imageUrl = '';
   Map allRatings = {};
+  Map allReviews = {};
   double avgRating = 0.0;
 
   void _getAlbum(albumId) {
@@ -68,12 +69,29 @@ class _AlbumPageState extends State<AlbumPage> {
     });
   }
 
+  Future _getInitReviewMap(String id) async {
+    await FirebaseFirestore.instance
+        .collection('albums')
+        .doc(id)
+        .get()
+        .then((snapshot) async {
+      if (snapshot.exists) {
+        setState(() {
+          allReviews = snapshot.data()!['allReviews'];
+        });
+      } else {
+        avgRating = 0.0;
+      }
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     _getAlbum(widget.albumId);
     _getInitRating();
     _getInitRatingMap('albumid');
+    _getInitReviewMap('albumid');
   }
 
   @override
@@ -119,7 +137,7 @@ class _AlbumPageState extends State<AlbumPage> {
                   avgRating: avgRating,
                 ),
                 AlbumList(album: album),
-                ReviewSection(numComments: 10),
+                ReviewSection(comments: allReviews),
               ],
             ),
           ),
