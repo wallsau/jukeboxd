@@ -68,4 +68,13 @@ class RemoteService {
     }
     return searchList;
   }
+
+  Future<String> getTrackImage(String trackId) async {
+    final spotify = SpotifyApi(credentials);
+    final track = await spotify.tracks.get(trackId);
+    final albumId = track.album!.id;
+    final album = await spotify.albums.get(albumId!);
+    final trackImage = album.images!.first.url.toString();
+    return trackImage;
+  }
 }
