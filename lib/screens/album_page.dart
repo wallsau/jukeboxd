@@ -137,7 +137,11 @@ class _AlbumPageState extends State<AlbumPage> {
                   avgRating: avgRating,
                 ),
                 AlbumList(album: album),
-                ReviewSection(comments: allReviews),
+                ReviewSection(
+                  comments: allReviews,
+                  scores: allRatings
+                      .map((key, value) => MapEntry(key, value?.toDouble())),
+                ),
               ],
             ),
           ),

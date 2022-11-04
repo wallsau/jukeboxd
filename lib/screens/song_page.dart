@@ -123,32 +123,38 @@ class _SongPageState extends State<SongPage> {
         },
         child: SingleChildScrollView(
           child: Center(
-            child: Column(children: [
-              SongImage(),
-              RateBar(
-                initRating: rating,
-                ignoreChange: false,
-                starSize: 50.0,
-                id: widget.trackId,
-                type: (artistList.isEmpty) ? 'track' : track!.type!,
-              ),
-              //SlimReviewWidget(),
-              BlockReviewWidget(
-                id: widget.trackId,
-                type: track!.type,
-                initReview: review,
-                artist: (artistList.isEmpty)
-                    ? ''
-                    : track!.artists![0].name.toString(),
-                title: (artistList.isEmpty) ? '' : track!.name,
-              ), //Alternate review widget; there will be only one review widget normally
-              InfoBlock(
-                title: (artistList.isEmpty) ? 'Loading...' : track!.name!,
-                artist: artistList,
-                avgRating: avgRating,
-              ),
-              ReviewSection(comments: allReviews),
-            ]),
+            child: Column(
+              children: [
+                SongImage(),
+                RateBar(
+                  initRating: rating,
+                  ignoreChange: false,
+                  starSize: 50.0,
+                  id: widget.trackId,
+                  type: (artistList.isEmpty) ? 'track' : track!.type!,
+                ),
+                //SlimReviewWidget(),
+                BlockReviewWidget(
+                  id: widget.trackId,
+                  type: track!.type,
+                  initReview: review,
+                  artist: (artistList.isEmpty)
+                      ? ''
+                      : track!.artists![0].name.toString(),
+                  title: (artistList.isEmpty) ? '' : track!.name,
+                ), //Alternate review widget; there will be only one review widget normally
+                InfoBlock(
+                  title: (artistList.isEmpty) ? 'Loading...' : track!.name!,
+                  artist: artistList,
+                  avgRating: avgRating,
+                ),
+                ReviewSection(
+                  comments: allReviews,
+                  scores: allRatings
+                      .map((key, value) => MapEntry(key, value?.toDouble())),
+                ),
+              ],
+            ),
           ),
         ),
       ),

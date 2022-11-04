@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:jukeboxd/services/firebase.dart';
 import 'package:jukeboxd/utils/colors.dart';
+import 'package:jukeboxd/utils/custom_widgets/rating_widget.dart';
 import 'package:spotify/spotify.dart';
 
 //Artist or album picture
@@ -71,7 +72,7 @@ class SongImage extends StatelessWidget {
 }
 
 //Collection of albums or songs. Requires a title and a list of albums/songs
-//Found on: artist_page, album_page
+//Found on: artist_page
 class ArtistList extends StatelessWidget {
   ArtistList({required this.title, required this.musicCollection, super.key});
   final String title;
@@ -130,6 +131,8 @@ class ArtistList extends StatelessWidget {
   }
 }
 
+//Collection of songs for an album. Requires a title and a list of songs
+//Found on: album_page
 class AlbumList extends StatelessWidget {
   const AlbumList({required this.album, super.key});
   final Album album;
@@ -142,21 +145,40 @@ class AlbumList extends StatelessWidget {
           borderRadius: BorderRadius.circular(40.0),
           color: purple,
         ),
-        child: SizedBox(
-          height: 250,
-          child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: album.tracks?.length,
-            itemBuilder: (context, index) {
-              return ListTile(
-                leading: SizedBox(
-                    width: 200,
-                    child:
-                        Text(album.tracks!.elementAt(index).name.toString())),
-                trailing: Icon(Icons.star_border_outlined),
-              );
-            },
-          ),
+        child: Column(
+          children: [
+            const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Text(
+                'Songs in this album',
+                style: TextStyle(
+                  fontStyle: FontStyle.italic,
+                  fontSize: 20.0,
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                height: 250,
+                decoration:
+                    BoxDecoration(borderRadius: BorderRadius.circular(40.0)),
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: album.tracks?.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      leading: SizedBox(
+                          width: 200,
+                          child: Text(
+                              album.tracks!.elementAt(index).name.toString())),
+                      trailing: Icon(Icons.star_border_outlined),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -280,14 +302,16 @@ class _BlockReviewWidgetState extends State<BlockReviewWidget> {
 }
 
 //Comment section widgets
-//Container to hold comments
+//Container to hold comments which consist of a text and a score
 //Located on these pages: song, album
 class ReviewSection extends StatefulWidget {
   //final int numComments;
   final Map? comments;
+  final Map? scores;
   ReviewSection({
     //required this.numComments,
     this.comments,
+    this.scores,
     Key? key,
   }) : super(key: key);
 
@@ -328,6 +352,7 @@ class _ReviewSectionState extends State<ReviewSection> {
                   return ReviewComment(
                     username: key,
                     text: widget.comments?[key] ?? 'Sample',
+                    rating: widget.scores?[key] ?? 0.0,
                   );
                 },
               ),
@@ -356,7 +381,7 @@ class ReviewComment extends StatelessWidget {
   const ReviewComment(
       {required this.username,
       required this.text,
-      this.rating = 0.0,
+      required this.rating,
       super.key});
   @override
   Widget build(BuildContext context) {
@@ -371,10 +396,20 @@ class ReviewComment extends StatelessWidget {
           color: iconsGray,
         ),
         child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text("$username said: $text",
-                style: const TextStyle(fontSize: 18.0, color: purple)),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text("$username said: $text",
+                    style: const TextStyle(fontSize: 18.0, color: purple)),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 8.0),
+                child: RateBar(
+                    initRating: rating, ignoreChange: true, starSize: 15.0),
+              )
+            ],
           ),
         ),
       ),
