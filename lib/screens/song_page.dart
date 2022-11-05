@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:jukeboxd/utils/colors.dart';
-//import 'package:jukeboxd/utils/cust_widgets.dart';
 import 'package:jukeboxd/utils/custom_widgets/result_page_widgets.dart';
 import 'package:jukeboxd/utils/custom_widgets/rating_widget.dart';
 import '../services/firebase.dart';
@@ -28,7 +27,7 @@ class _SongPageState extends State<SongPage> {
   Map allRatings = {};
   Map allReviews = {};
   String artistList = '';
-  var imageUrl = '';
+  String imageUrl = '';
 
   void _getTrack(trackId) {
     RemoteService().getTrack(trackId).then((value) {
@@ -41,6 +40,14 @@ class _SongPageState extends State<SongPage> {
             artistList += ', ${element.name}';
           }
         });
+      });
+    });
+  }
+
+  void _getTrackImg(trackId) {
+    RemoteService().getTrackImage(trackId).then((value) {
+      setState(() {
+        imageUrl = value;
       });
     });
   }
@@ -103,6 +110,7 @@ class _SongPageState extends State<SongPage> {
   void initState() {
     super.initState();
     _getTrack(widget.trackId);
+    _getTrackImg(widget.trackId);
     _getInitRating();
     _getInitRatingMap('trackid');
     _getInitReviewMap('trackid');
@@ -123,6 +131,7 @@ class _SongPageState extends State<SongPage> {
         },
         child: SingleChildScrollView(
           child: Center(
+<<<<<<< Updated upstream
             child: Column(
               children: [
                 SongImage(),
@@ -155,6 +164,34 @@ class _SongPageState extends State<SongPage> {
                 ),
               ],
             ),
+=======
+            child: Column(children: [
+              SongImage(imageUrl: imageUrl),
+              RateBar(
+                initRating: rating,
+                ignoreChange: false,
+                starSize: 50.0,
+                id: widget.trackId,
+                type: (artistList.isEmpty) ? 'track' : track!.type!,
+              ),
+              //SlimReviewWidget(),
+              BlockReviewWidget(
+                id: widget.trackId,
+                type: track!.type,
+                initReview: review,
+                artist: (artistList.isEmpty)
+                    ? ''
+                    : track!.artists![0].name.toString(),
+                title: (artistList.isEmpty) ? '' : track!.name,
+              ), //Alternate review widget; there will be only one review widget normally
+              InfoBlock(
+                title: (artistList.isEmpty) ? 'Loading...' : track!.name!,
+                artist: artistList,
+                avgRating: avgRating,
+              ),
+              ReviewSection(comments: allReviews),
+            ]),
+>>>>>>> Stashed changes
           ),
         ),
       ),

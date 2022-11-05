@@ -42,9 +42,9 @@ class CoverImage extends StatelessWidget {
 /*Will need to replace AssetImage later*/
 //Located on these pages: song
 class SongImage extends StatelessWidget {
-  final AssetImage titleImage;
+  final String imageUrl;
   const SongImage({
-    this.titleImage = const AssetImage("images/jukeboxd.jpg"),
+    required this.imageUrl,
     Key? key,
   }) : super(key: key);
 
@@ -62,7 +62,8 @@ class SongImage extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.blueGrey,
             image: DecorationImage(
-              image: titleImage,
+              image: NetworkImage(imageUrl),
+              //scale: 0.5,
             ),
           ),
         ),
