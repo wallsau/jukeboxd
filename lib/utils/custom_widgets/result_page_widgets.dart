@@ -306,11 +306,11 @@ class _BlockReviewWidgetState extends State<BlockReviewWidget> {
 //Located on these pages: song, album
 class ReviewSection extends StatefulWidget {
   //final int numComments;
-  final Map? comments;
+  final Map comments;
   final Map? scores;
   ReviewSection({
     //required this.numComments,
-    this.comments,
+    required this.comments,
     this.scores,
     Key? key,
   }) : super(key: key);
@@ -345,17 +345,30 @@ class _ReviewSectionState extends State<ReviewSection> {
             ),
             SizedBox(
               height: 300.0,
-              child: ListView.builder(
-                itemCount: widget.comments?.length ?? 0,
-                itemBuilder: (BuildContext context, int index) {
-                  String key = widget.comments?.keys.elementAt(index);
-                  return ReviewComment(
-                    username: key,
-                    text: widget.comments?[key] ?? 'Sample',
-                    rating: widget.scores?[key] ?? 0.0,
-                  );
-                },
-              ),
+              child: (widget.comments.isEmpty)
+                  ? Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: const [
+                        Text(
+                          'No comments found.\nBe the first to review!',
+                          style: TextStyle(
+                            fontStyle: FontStyle.italic,
+                            fontSize: 20.0,
+                          ),
+                        ),
+                      ],
+                    )
+                  : ListView.builder(
+                      itemCount: widget.comments.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        String key = widget.comments.keys.elementAt(index);
+                        return ReviewComment(
+                          username: key,
+                          text: widget.comments?[key] ?? 'Sample',
+                          rating: widget.scores?[key] ?? 0.0,
+                        );
+                      },
+                    ),
             )
             // Column(
             //   children: List.generate(

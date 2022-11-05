@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:spotify/spotify.dart';
 import 'package:jukeboxd/services/remote_services.dart';
@@ -21,6 +23,7 @@ class _AlbumPageState extends State<AlbumPage> {
   Map allRatings = {};
   Map allReviews = {};
   double avgRating = 0.0;
+  var db = FirebaseFirestore.instance;
 
   void _getAlbum(albumId) {
     RemoteService().getAlbum(albumId).then((value) {
@@ -48,41 +51,39 @@ class _AlbumPageState extends State<AlbumPage> {
     });
   }
 
-  Future _getInitRatingMap(String id) async {
-    await FirebaseFirestore.instance
-        .collection('albums')
-        .doc(id)
-        .get()
-        .then((snapshot) async {
+  Future _createAlbumStorage(String id) async {
+    final reviews = <String, Map<dynamic, dynamic>>{'allReviews': HashMap()};
+    final ratings = <String, Map<dynamic, double>>{'allRatings': HashMap()};
+    db.collection('albums').doc(id).set(ratings);
+    db.collection('albums').doc(id).update(reviews);
+  }
+
+  Future _getAlbumStorage(String id) async {
+    final albumDB =
+        FirebaseFirestore.instance.collection('albums').doc(id).get();
+    await albumDB.then((snapshot) async {
       if (snapshot.exists) {
         setState(() {
+          allReviews = snapshot.data()!['allReviews'];
           allRatings = snapshot.data()!['allRatings'];
-          allRatings.forEach((key, value) {
-            avgRating += value;
-          });
-          avgRating =
-              double.parse((avgRating / allRatings.length).toStringAsFixed(2));
+          avgRating = _getAverage(allRatings);
         });
       } else {
         avgRating = 0.0;
+        _createAlbumStorage(id);
       }
     });
   }
 
-  Future _getInitReviewMap(String id) async {
-    await FirebaseFirestore.instance
-        .collection('albums')
-        .doc(id)
-        .get()
-        .then((snapshot) async {
-      if (snapshot.exists) {
-        setState(() {
-          allReviews = snapshot.data()!['allReviews'];
-        });
-      } else {
-        avgRating = 0.0;
-      }
+  double _getAverage(Map ratings) {
+    if (ratings.isEmpty) {
+      return 0.0;
+    }
+    var tmp = 0.0;
+    ratings.forEach((key, value) {
+      tmp += value;
     });
+    return double.parse((tmp / ratings.length).toStringAsFixed(2));
   }
 
   @override
@@ -90,8 +91,7 @@ class _AlbumPageState extends State<AlbumPage> {
     super.initState();
     _getAlbum(widget.albumId);
     _getInitRating();
-    _getInitRatingMap('albumid');
-    _getInitReviewMap('albumid');
+    _getAlbumStorage(widget.albumId);
   }
 
   @override
