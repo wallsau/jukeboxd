@@ -25,6 +25,7 @@ class _AlbumPageState extends State<AlbumPage> {
   double avgRating = 0.0;
   var db = FirebaseFirestore.instance;
 
+//Get the album model and image url
   void _getAlbum(albumId) {
     RemoteService().getAlbum(albumId).then((value) {
       setState(() {
@@ -34,6 +35,7 @@ class _AlbumPageState extends State<AlbumPage> {
     });
   }
 
+//Gets the user's initial rating and review
   Future _getInitRating() async {
     await FirebaseFirestore.instance
         .collection('accounts')
@@ -51,6 +53,7 @@ class _AlbumPageState extends State<AlbumPage> {
     });
   }
 
+//Sets up a document in albums collection if the album does not have one
   Future _createAlbumStorage(String id) async {
     final reviews = <String, Map<dynamic, dynamic>>{'allReviews': HashMap()};
     final ratings = <String, Map<dynamic, double>>{'allRatings': HashMap()};
@@ -58,6 +61,7 @@ class _AlbumPageState extends State<AlbumPage> {
     db.collection('albums').doc(id).update(reviews);
   }
 
+//Get all reviews and rating for this page
   Future _getAlbumStorage(String id) async {
     final albumDB =
         FirebaseFirestore.instance.collection('albums').doc(id).get();
@@ -75,6 +79,7 @@ class _AlbumPageState extends State<AlbumPage> {
     });
   }
 
+//Return an average rating
   double _getAverage(Map ratings) {
     if (ratings.isEmpty) {
       return 0.0;

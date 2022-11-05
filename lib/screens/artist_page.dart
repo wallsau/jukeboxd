@@ -25,6 +25,7 @@ class _ArtistPageState extends State<ArtistPage> {
 
   var countryCode = 'US';
 
+  //Get artist model and image url
   void _getArtist(artistId) {
     RemoteService().getArtist(artistId).then((value) {
       setState(() {
@@ -34,6 +35,7 @@ class _ArtistPageState extends State<ArtistPage> {
     });
   }
 
+  //Find top tracks and add to TrackNames list
   void _getTopTracks(artistId, countryCode) {
     RemoteService().getTopTracks(artistId, countryCode).then((value) {
       setState(() {
@@ -48,6 +50,7 @@ class _ArtistPageState extends State<ArtistPage> {
     });
   }
 
+//Add the albums to artistAlbums list
   void _getAlbums(artistId) {
     RemoteService().getArtistAlbums(artistId).then((value) {
       setState(() {
@@ -70,8 +73,8 @@ class _ArtistPageState extends State<ArtistPage> {
     _getAlbums(widget.artistId);
   }
 
+  @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(

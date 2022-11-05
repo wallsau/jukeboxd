@@ -4,6 +4,7 @@ import 'package:jukeboxd/services/firebase.dart';
 import 'package:jukeboxd/utils/colors.dart';
 import 'package:jukeboxd/utils/custom_widgets/rating_widget.dart';
 import 'package:spotify/spotify.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 //Artist or album picture
 //Found on: artist_page, album_page
@@ -306,11 +307,9 @@ class _BlockReviewWidgetState extends State<BlockReviewWidget> {
 //Container to hold comments which consist of a text and a score
 //Located on these pages: song, album
 class ReviewSection extends StatefulWidget {
-  //final int numComments;
   final Map comments;
   final Map? scores;
   ReviewSection({
-    //required this.numComments,
     required this.comments,
     this.scores,
     Key? key,
@@ -364,22 +363,13 @@ class _ReviewSectionState extends State<ReviewSection> {
                       itemBuilder: (BuildContext context, int index) {
                         String key = widget.comments.keys.elementAt(index);
                         return ReviewComment(
-                          username: key,
-                          text: widget.comments?[key] ?? 'Sample',
+                          userid: key,
+                          text: widget.comments[key],
                           rating: widget.scores?[key] ?? 0.0,
                         );
                       },
                     ),
-            )
-            // Column(
-            //   children: List.generate(
-            //       widget.comments?.length ?? 0,
-            //       growable: true,
-            //       (index) => ReviewComment(
-            //             username: "username$index",
-            //             text: '\n1\n2\n3\n4\n5',
-            //           )),
-            // ),
+            ),
           ],
         ),
       ),
@@ -389,14 +379,45 @@ class _ReviewSectionState extends State<ReviewSection> {
 
 //Review comments from other users
 //Located on these pages: song, album
-class ReviewComment extends StatelessWidget {
-  final String username, text;
+class ReviewComment extends StatefulWidget {
+  final String userid, text;
   final double rating;
   const ReviewComment(
-      {required this.username,
+      {required this.userid,
       required this.text,
       required this.rating,
       super.key});
+
+  @override
+  State<ReviewComment> createState() => _ReviewCommentState();
+}
+
+class _ReviewCommentState extends State<ReviewComment> {
+  String username = '';
+  Future _getUsername(String id) async {
+    await FirebaseFirestore.instance
+        .collection('accounts')
+        .doc(id)
+        .get()
+        .then((snapshot) async {
+      if (snapshot.exists) {
+        setState(() {
+          String email = snapshot.data()!['email'];
+          final emailsplit = email.split('@');
+          username = emailsplit[0];
+        });
+      } else {
+        username = widget.userid;
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getUsername(widget.userid);
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -415,13 +436,15 @@ class ReviewComment extends StatelessWidget {
             children: [
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text("$username said: $text",
+                child: Text("$username said: ${widget.text}",
                     style: const TextStyle(fontSize: 18.0, color: purple)),
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 8.0),
                 child: RateBar(
-                    initRating: rating, ignoreChange: true, starSize: 15.0),
+                    initRating: widget.rating,
+                    ignoreChange: true,
+                    starSize: 15.0),
               )
             ],
           ),

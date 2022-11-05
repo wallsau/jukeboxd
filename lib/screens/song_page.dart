@@ -29,6 +29,7 @@ class _SongPageState extends State<SongPage> {
   String artistList = '';
   String imageUrl = '';
 
+//Get the track model
   void _getTrack(trackId) {
     RemoteService().getTrack(trackId).then((value) {
       setState(() {
@@ -44,6 +45,7 @@ class _SongPageState extends State<SongPage> {
     });
   }
 
+//Get the url for track image
   void _getTrackImg(trackId) {
     RemoteService().getTrackImage(trackId).then((value) {
       setState(() {
@@ -52,6 +54,7 @@ class _SongPageState extends State<SongPage> {
     });
   }
 
+//Gets the user's initial rating and review
   Future _getInitRating() async {
     await FirebaseFirestore.instance
         .collection('accounts')
