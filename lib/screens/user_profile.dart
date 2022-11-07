@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:jukeboxd/screens/login_page.dart';
 import 'package:jukeboxd/screens/search_page.dart';
 import 'package:jukeboxd/utils/colors.dart';
 import 'package:jukeboxd/utils/custom_widgets/user_page_widgets.dart';
@@ -15,6 +17,7 @@ class UserProfile extends StatefulWidget {
 }
 
 class _UserProfileState extends State<UserProfile> {
+  final uid = DataBase().getUid();
   @override
   Widget build(BuildContext context) {
     //final screenWidth = MediaQuery.of(context).size.width;
@@ -49,7 +52,9 @@ class _UserProfileState extends State<UserProfile> {
               StreamBuilder(
                 stream: FirebaseFirestore.instance
                     .collection('accounts')
-                    .doc(DataBase().getUid())
+                    .doc((FirebaseAuth.instance.currentUser != null)
+                        ? uid
+                        : '1BwBzTdDz1uy1n40j31q')
                     .collection('album')
                     .orderBy('rating')
                     .limit(5)
@@ -82,7 +87,21 @@ class _UserProfileState extends State<UserProfile> {
               ProfileMenu(
                   toAlbumRatings: "MY ALBUMS",
                   toSongRatings: "MY SONGS",
-                  toReviews: "MY REVIEWS")
+                  toReviews: "MY REVIEWS"),
+              ElevatedButton(
+                onPressed: () async {
+                  await FirebaseAuth.instance.signOut();
+                  setState(() {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: ((context) => LoginPage()),
+                      ),
+                    );
+                  });
+                },
+                child: const Text('Sign Out'),
+              ),
             ]),
           ),
         ),

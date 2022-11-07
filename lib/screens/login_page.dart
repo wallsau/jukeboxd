@@ -109,8 +109,8 @@ class _LoginPageState extends State<LoginPage> {
                             try {
                               await FirebaseAuth.instance
                                   .signInWithEmailAndPassword(
-                                email: nameController.text,
-                                password: passwordController.text,
+                                email: nameController.text.trim(),
+                                password: passwordController.text.trim(),
                               );
                             } on FirebaseAuthException catch (error) {
                               errorMessage = error.message!;
