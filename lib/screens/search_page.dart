@@ -188,8 +188,8 @@ class CustomSearchDelegate extends SearchDelegate {
                     )
                   : img.Image.asset('images/jukeboxd.jpg'),
               title: Text(result!.name.toString()),
-              subtitle: Text(result!.type.toString()),
-              trailing: Text(result!.id.toString()),
+              subtitle: Text(result!.artists.name.toString()),
+              trailing: Text(result!.type.toString()),
               onTap: () {
                 switch (result!.type.toString().toLowerCase()) {
                   case 'artist':

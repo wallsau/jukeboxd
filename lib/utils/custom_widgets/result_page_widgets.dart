@@ -1,5 +1,7 @@
 /* Custom widgets used for result pages of these types: album, song, artist */
 import 'package:flutter/material.dart';
+import 'package:jukeboxd/screens/album_page.dart';
+import 'package:jukeboxd/screens/song_page.dart';
 import 'package:jukeboxd/services/firebase.dart';
 import 'package:jukeboxd/utils/colors.dart';
 import 'package:jukeboxd/utils/custom_widgets/rating_widget.dart';
@@ -121,6 +123,40 @@ class ArtistList extends StatelessWidget {
                         ),
                       ),
                       trailing: Icon(Icons.star_border_outlined),
+                      onTap: () {
+                        switch (musicCollection.elementAt(index).type) {
+                          case "album":
+                            {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => AlbumPage(
+                                    albumId: musicCollection
+                                        .elementAt(index)
+                                        .id
+                                        .toString(),
+                                  ),
+                                ),
+                              );
+                            }
+                            break;
+                          case 'track':
+                            {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => SongPage(
+                                    trackId: musicCollection
+                                        .elementAt(index)
+                                        .id
+                                        .toString(),
+                                  ),
+                                ),
+                              );
+                            }
+                            break;
+                        }
+                      },
                     );
                   },
                 ),
