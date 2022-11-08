@@ -117,15 +117,16 @@ class ArtistList extends StatelessWidget {
                   itemBuilder: (context, index) {
                     return ListTile(
                       leading: Text(
-                        musicCollection.elementAt(index).toString(),
+                        musicCollection.elementAt(index).name.toString(),
                         style: const TextStyle(
                           color: purple,
                         ),
                       ),
                       trailing: Icon(Icons.star_border_outlined),
                       onTap: () {
-                        switch (musicCollection.elementAt(index).type) {
-                          case "album":
+                        switch (
+                            musicCollection!.elementAt(index).type.toString()) {
+                          case 'album':
                             {
                               Navigator.push(
                                 context,
