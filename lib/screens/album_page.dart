@@ -57,8 +57,11 @@ class _AlbumPageState extends State<AlbumPage> {
   Future _createAlbumStorage(String id) async {
     final reviews = <String, Map<dynamic, dynamic>>{'allReviews': HashMap()};
     final ratings = <String, Map<dynamic, double>>{'allRatings': HashMap()};
-    db.collection('albums').doc(id).set(ratings);
-    db.collection('albums').doc(id).update(reviews);
+    await FirebaseFirestore.instance.collection('albums').doc(id).set(ratings);
+    await FirebaseFirestore.instance
+        .collection('albums')
+        .doc(id)
+        .update(reviews);
   }
 
 //Get all reviews and rating for this page
@@ -125,6 +128,7 @@ class _AlbumPageState extends State<AlbumPage> {
                   starSize: 50.0,
                   id: widget.albumId,
                   type: 'album',
+                  typeCollection: 'albums',
                 ),
                 BlockReviewWidget(
                   id: widget.albumId,
@@ -135,6 +139,7 @@ class _AlbumPageState extends State<AlbumPage> {
                       : album.artists![0].name.toString(),
                   title: album.name,
                   imageUrl: (album.name == null) ? '' : album.images!.first.url,
+                  typeCollection: 'albums',
                 ),
                 InfoBlock(
                   title: album.name.toString(),

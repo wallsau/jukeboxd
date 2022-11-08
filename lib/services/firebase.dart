@@ -12,7 +12,7 @@ class DataBase {
   }
 
   void setReview(String review, String objectId, String? type, String? title,
-      String? artist, String? imageUrl) async {
+      String? artist, String? imageUrl, String? typeCollection) async {
     String userId = getUid();
 
     var reviewMap = <String, String>{};
@@ -30,20 +30,38 @@ class DataBase {
         'imageUrl': imageUrl
       };
     }
+    final userAndReviewMap = <String, String>{userId: review};
+    final mapToAllRatings = <String, Map<dynamic, dynamic>>{
+      'allReviews': userAndReviewMap
+    };
 
     final docRef =
         db.collection('accounts').doc(userId).collection(type!).doc(objectId);
+    final collectionRef = db.collection(typeCollection!).doc(objectId);
+    //Update accounts document
     await docRef.set(reviewMap, SetOptions(merge: true));
+    //Update albums or songs document
+    await collectionRef.set(mapToAllRatings, SetOptions(merge: true));
   }
 
-  void setRating(double rating, String objectId, String? type) async {
+  void setRating(double rating, String objectId, String? type,
+      String? typeCollection) async {
     String userId = getUid();
-    final reviewMap = <String, double>{
+    final ratingMap = <String, double>{
       'rating': rating,
     };
+    final userAndRatingMap = <dynamic, double>{userId: rating};
+    final mapToAllRatings = <String, Map<dynamic, double>>{
+      'allRatings': userAndRatingMap
+    };
+
     final docRef =
         db.collection('accounts').doc(userId).collection(type!).doc(objectId);
-    await docRef.set(reviewMap, SetOptions(merge: true));
+    final collectionRef = db.collection(typeCollection!).doc(objectId);
+    //Update accounts document
+    await docRef.set(ratingMap, SetOptions(merge: true));
+    //Update albums or songs document
+    await collectionRef.set(mapToAllRatings, SetOptions(merge: true));
   }
 
   double getRating(String objectId, String? type) {
@@ -63,7 +81,8 @@ class DataBase {
     return rating;
   }
 
-  void deleteReview(String objectId, String? type) async {
+  void deleteReview(
+      String objectId, String? type, String? collectionType) async {
     String userId = getUid();
     final deletion = <String, dynamic>{
       'rating': FieldValue.delete(),
@@ -72,7 +91,9 @@ class DataBase {
     final docRef =
         db.collection('accounts').doc(userId).collection(type!).doc(objectId);
     docRef.update(deletion);
-
+    await db.collection(collectionType!).doc(objectId).set({
+      'allReviews': {userId: FieldValue.delete()}
+    }, SetOptions(merge: true));
     if (await docRef.get().then((snapshot) => snapshot.data()!.isEmpty)) {
       docRef.delete();
     }

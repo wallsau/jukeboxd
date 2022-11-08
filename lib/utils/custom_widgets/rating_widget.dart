@@ -11,6 +11,7 @@ class RateBar extends StatefulWidget {
     required this.starSize,
     this.id,
     this.type,
+    this.typeCollection,
     super.key,
   });
   double initRating;
@@ -18,6 +19,7 @@ class RateBar extends StatefulWidget {
   final double starSize;
   final String? id;
   final String? type;
+  final String? typeCollection;
 
   @override
   State<RateBar> createState() => _RateBarState();
@@ -51,7 +53,12 @@ class _RateBarState extends State<RateBar> {
           setState(() {
             if (_debounce?.isActive ?? false) _debounce?.cancel();
             _debounce = Timer(const Duration(seconds: 1), () {
-              DataBase().setRating(value, widget.id!, widget.type);
+              DataBase().setRating(
+                value,
+                widget.id!,
+                widget.type,
+                widget.typeCollection!,
+              );
               widget.initRating = value;
             });
           });

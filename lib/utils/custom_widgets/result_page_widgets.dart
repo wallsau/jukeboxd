@@ -197,9 +197,10 @@ class BlockReviewWidget extends StatefulWidget {
       required this.type,
       this.initReview,
       this.imageUrl = '',
+      this.typeCollection,
       super.key});
   final String id;
-  final String? type, initReview, title, artist, imageUrl;
+  final String? type, initReview, title, artist, imageUrl, typeCollection;
   @override
   State<BlockReviewWidget> createState() => _BlockReviewWidgetState();
 }
@@ -267,7 +268,8 @@ class _BlockReviewWidgetState extends State<BlockReviewWidget> {
                             widget.type,
                             widget.title,
                             widget.artist,
-                            widget.imageUrl);
+                            widget.imageUrl,
+                            widget.typeCollection);
                       },
                       child: const Text(
                         'Submit',
@@ -285,7 +287,8 @@ class _BlockReviewWidgetState extends State<BlockReviewWidget> {
                     ),
                     child: TextButton(
                       onPressed: () {
-                        DataBase().deleteReview(widget.id, widget.type);
+                        DataBase().deleteReview(
+                            widget.id, widget.type, widget.typeCollection);
                       },
                       child: const Text(
                         'Delete',
@@ -393,7 +396,7 @@ class ReviewComment extends StatefulWidget {
 }
 
 class _ReviewCommentState extends State<ReviewComment> {
-  String username = '';
+  String username = 'Default';
   Future _getUsername(String id) async {
     await FirebaseFirestore.instance
         .collection('accounts')
