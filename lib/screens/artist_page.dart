@@ -30,7 +30,7 @@ class _ArtistPageState extends State<ArtistPage> {
     RemoteService().getArtist(artistId).then((value) {
       setState(() {
         artist = value!;
-        imageUrl = value!.images!.first.url.toString();
+        imageUrl = value.images!.first.url.toString();
       });
     });
   }
