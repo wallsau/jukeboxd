@@ -43,6 +43,7 @@ dependencies:
   flutter_dotenv: ^5.0.2
   spotify: ^0.8.0
   cloud_firestore: ^3.5.1
+  cached_network_image: ^3.2.2
 
 dev_dependencies:
   flutter_test:
