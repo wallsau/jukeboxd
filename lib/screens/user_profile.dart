@@ -18,6 +18,27 @@ class UserProfile extends StatefulWidget {
 
 class _UserProfileState extends State<UserProfile> {
   final uid = DataBase().getUid();
+  String username = 'Placeholder';
+  Future _getUsername() async {
+    await FirebaseFirestore.instance
+        .collection('accounts')
+        .doc(DataBase().getUid())
+        .get()
+        .then((snapshot) async {
+      if (snapshot.exists) {
+        setState(() {
+          username = snapshot.data()!['email'];
+        });
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getUsername();
+  }
+
   @override
   Widget build(BuildContext context) {
     //final screenWidth = MediaQuery.of(context).size.width;
@@ -48,7 +69,7 @@ class _UserProfileState extends State<UserProfile> {
           child: Center(
             child: Column(children: [
               /*Widgets to build out the profile*/
-              UserHeader(username: "MyUser"),
+              UserHeader(username: username),
               StreamBuilder(
                 stream: FirebaseFirestore.instance
                     .collection('accounts')
@@ -84,9 +105,9 @@ class _UserProfileState extends State<UserProfile> {
                 },
               ),
               //UserMenu(),
-              ProfileMenu(
-                  toAlbumRatings: "MY ALBUMS",
-                  toSongRatings: "MY SONGS",
+              const ProfileMenu(
+                  toAlbumRatings: "MY RATED ALBUMS",
+                  toSongRatings: "MY RATED SONGS",
                   toReviews: "MY REVIEWS"),
               ElevatedButton(
                 onPressed: () async {

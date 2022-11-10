@@ -149,6 +149,11 @@ class _SongPageState extends State<SongPage> {
                   starSize: 50.0,
                   id: widget.trackId,
                   type: (artistList.isEmpty) ? 'track' : track!.type!,
+                  artist: (artistList.isEmpty)
+                      ? ''
+                      : track!.artists![0].name.toString(),
+                  title: (artistList.isEmpty) ? '' : track!.name,
+                  imageUrl: imageUrl,
                   typeCollection: 'songs',
                 ),
                 BlockReviewWidget(

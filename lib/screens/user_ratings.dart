@@ -8,11 +8,15 @@ class UserRatings extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text(title)),
+        appBar: AppBar(
+            title: Text(
+          title,
+          style: const TextStyle(fontSize: 30.0),
+        )),
         body: SingleChildScrollView(
           child: Center(
               child: Column(
-            children: [UserList(numRatings: 20, title: title, type: type)],
+            children: [UserList(title: title, type: type)],
           )),
         ));
   }

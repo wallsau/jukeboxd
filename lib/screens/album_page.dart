@@ -128,6 +128,11 @@ class _AlbumPageState extends State<AlbumPage> {
                   starSize: 50.0,
                   id: widget.albumId,
                   type: 'album',
+                  title: album.name,
+                  artist: (album.name == null)
+                      ? ''
+                      : album.artists![0].name.toString(),
+                  imageUrl: (album.name == null) ? '' : album.images!.first.url,
                   typeCollection: 'albums',
                 ),
                 BlockReviewWidget(

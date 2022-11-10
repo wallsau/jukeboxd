@@ -11,15 +11,16 @@ class RateBar extends StatefulWidget {
     required this.starSize,
     this.id,
     this.type,
+    this.title,
+    this.artist,
+    this.imageUrl,
     this.typeCollection,
     super.key,
   });
   double initRating;
   final bool ignoreChange;
   final double starSize;
-  final String? id;
-  final String? type;
-  final String? typeCollection;
+  final String? id, type, title, artist, imageUrl, typeCollection;
 
   @override
   State<RateBar> createState() => _RateBarState();
@@ -57,6 +58,9 @@ class _RateBarState extends State<RateBar> {
                 value,
                 widget.id!,
                 widget.type,
+                widget.title,
+                widget.artist,
+                widget.imageUrl,
                 widget.typeCollection!,
               );
               widget.initRating = value;

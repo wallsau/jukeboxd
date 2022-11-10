@@ -44,12 +44,25 @@ class DataBase {
     await collectionRef.set(mapToAllRatings, SetOptions(merge: true));
   }
 
-  void setRating(double rating, String objectId, String? type,
-      String? typeCollection) async {
+  void setRating(double rating, String objectId, String? type, String? title,
+      String? artist, String? imageUrl, String? typeCollection) async {
     String userId = getUid();
     final ratingMap = <String, double>{
       'rating': rating,
     };
+    var infoMap = <String, String>{};
+    if (imageUrl!.isEmpty) {
+      infoMap = <String, String>{
+        'artist': artist!,
+        'title': title!,
+      };
+    } else {
+      infoMap = <String, String>{
+        'artist': artist!,
+        'title': title!,
+        'imageUrl': imageUrl
+      };
+    }
     final userAndRatingMap = <dynamic, double>{userId: rating};
     final mapToAllRatings = <String, Map<dynamic, double>>{
       'allRatings': userAndRatingMap
@@ -59,6 +72,7 @@ class DataBase {
         db.collection('accounts').doc(userId).collection(type!).doc(objectId);
     final collectionRef = db.collection(typeCollection!).doc(objectId);
     //Update accounts document
+    await docRef.set(infoMap, SetOptions(merge: true));
     await docRef.set(ratingMap, SetOptions(merge: true));
     //Update albums or songs document
     await collectionRef.set(mapToAllRatings, SetOptions(merge: true));
