@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:jukeboxd/screens/signup_page.dart';
 import 'package:jukeboxd/screens/user_profile.dart';
 import 'package:jukeboxd/utils/colors.dart';
 import 'package:jukeboxd/utils/validation.dart';
@@ -23,20 +22,13 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     User? user = FirebaseAuth.instance.currentUser;
-    var db = FirebaseFirestore.instance;
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (user != null) {
-        Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => UserProfile()));
-      }
-    });
 
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Welcome!'),
+          automaticallyImplyLeading: false,
         ),
         body: GestureDetector(
           onTap: () {
@@ -53,7 +45,7 @@ class _LoginPageState extends State<LoginPage> {
               Container(
                 alignment: Alignment.center,
                 padding: const EdgeInsets.all(10),
-                child: Text('Logged ${user == null ? 'out' : 'in'}'),
+                child: Text('Currently Logged ${user == null ? 'out' : 'in'}'),
               ),
               //Username Text Field
               Container(
@@ -118,6 +110,9 @@ class _LoginPageState extends State<LoginPage> {
                             setState(() {
                               isLoading = false;
                             });
+                            if (!mounted) return;
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => UserProfile()));
                           }
                         },
                   child: isLoading
@@ -163,45 +158,14 @@ class _LoginPageState extends State<LoginPage> {
                 children: <Widget>[
                   const Text("Don't have an account?"),
                   TextButton(
-                    onPressed: (user != null)
-                        ? null
-                        : () async {
-                            setState(() {
-                              isLoading = true;
-                              errorMessage = '';
-                            });
-                            if (_key.currentState!.validate()) {
-                              try {
-                                await FirebaseAuth.instance
-                                    .createUserWithEmailAndPassword(
-                                  email: nameController.text,
-                                  password: passwordController.text,
-                                )
-                                    .then((userCredential) {
-                                  var userUid = userCredential.user!.uid;
-                                  var email = userCredential.user!.email;
-
-                                  final userAccount = <String, String?>{
-                                    'email': email,
-                                  };
-                                  //Create user account document with userUid as the document id
-                                  db
-                                      .collection('accounts')
-                                      .doc(userUid)
-                                      .set(userAccount);
-                                });
-                              } on FirebaseAuthException catch (error) {
-                                errorMessage = error.message!;
-                              }
-                              setState(() => isLoading = false);
-                            }
-                          },
-                    child: isLoading
-                        ? const CircularProgressIndicator(color: Colors.white)
-                        : const Text(
-                            'Create one',
-                            style: TextStyle(fontSize: 20, color: buttonRed),
-                          ),
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => SignupPage()));
+                    },
+                    child: const Text(
+                      'Create one',
+                      style: TextStyle(fontSize: 20, color: buttonRed),
+                    ),
                   ),
                 ],
               )

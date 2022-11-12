@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:collection';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:jukeboxd/utils/colors.dart';
@@ -28,6 +29,7 @@ class _SongPageState extends State<SongPage> {
   Map allReviews = {};
   String artistList = '';
   String imageUrl = '';
+  var db = FirebaseFirestore.instance;
 
 //Get the track model
   void _getTrack(trackId) {
@@ -72,41 +74,45 @@ class _SongPageState extends State<SongPage> {
     });
   }
 
-  Future _getInitRatingMap(String id) async {
+//Sets up a document in albums collection if the song does not have one
+  Future _createSongStorage(String id) async {
+    final reviews = <String, Map<dynamic, dynamic>>{'allReviews': HashMap()};
+    final ratings = <String, Map<dynamic, double>>{'allRatings': HashMap()};
+    await FirebaseFirestore.instance.collection('songs').doc(id).set(ratings);
     await FirebaseFirestore.instance
         .collection('songs')
         .doc(id)
-        .get()
-        .then((snapshot) async {
+        .update(reviews);
+  }
+
+//Get all reviews and rating for this page
+  Future _getSongStorage(String id) async {
+    final albumDB =
+        FirebaseFirestore.instance.collection('songs').doc(id).get();
+    await albumDB.then((snapshot) async {
       if (snapshot.exists) {
         setState(() {
+          allReviews = snapshot.data()!['allReviews'];
           allRatings = snapshot.data()!['allRatings'];
-          allRatings.forEach((key, value) {
-            avgRating += value;
-          });
-          avgRating =
-              double.parse((avgRating / allRatings.length).toStringAsFixed(2));
+          avgRating = _getAverage(allRatings);
         });
       } else {
         avgRating = 0.0;
+        _createSongStorage(id);
       }
     });
   }
 
-  Future _getInitReviewMap(String id) async {
-    await FirebaseFirestore.instance
-        .collection('songs')
-        .doc(id)
-        .get()
-        .then((snapshot) async {
-      if (snapshot.exists) {
-        setState(() {
-          allReviews = snapshot.data()!['allReviews'];
-        });
-      } else {
-        avgRating = 0.0;
-      }
+//Return an average rating
+  double _getAverage(Map ratings) {
+    if (ratings.isEmpty) {
+      return 0.0;
+    }
+    var tmp = 0.0;
+    ratings.forEach((key, value) {
+      tmp += value;
     });
+    return double.parse((tmp / ratings.length).toStringAsFixed(2));
   }
 
   @override
@@ -115,8 +121,7 @@ class _SongPageState extends State<SongPage> {
     _getTrack(widget.trackId);
     _getTrackImg(widget.trackId);
     _getInitRating();
-    _getInitRatingMap('trackid');
-    _getInitReviewMap('trackid');
+    _getSongStorage(widget.trackId);
   }
 
   @override
@@ -144,6 +149,12 @@ class _SongPageState extends State<SongPage> {
                   starSize: 50.0,
                   id: widget.trackId,
                   type: (artistList.isEmpty) ? 'track' : track!.type!,
+                  artist: (artistList.isEmpty)
+                      ? ''
+                      : track!.artists![0].name.toString(),
+                  title: (artistList.isEmpty) ? '' : track!.name,
+                  imageUrl: imageUrl,
+                  typeCollection: 'songs',
                 ),
                 BlockReviewWidget(
                   id: widget.trackId,
@@ -153,6 +164,7 @@ class _SongPageState extends State<SongPage> {
                       ? ''
                       : track!.artists![0].name.toString(),
                   title: (artistList.isEmpty) ? '' : track!.name,
+                  typeCollection: 'songs',
                 ),
                 InfoBlock(
                   title: (artistList.isEmpty) ? 'Loading...' : track!.name!,

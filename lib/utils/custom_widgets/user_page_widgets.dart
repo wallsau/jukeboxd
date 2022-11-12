@@ -38,7 +38,7 @@ class UserHeader extends StatelessWidget {
           ),
         ),
         Text(
-          "@$username",
+          username,
           style: const TextStyle(color: buttonRed, fontWeight: FontWeight.bold),
         ),
       ],
@@ -243,13 +243,8 @@ class _ProfileMenuState extends State<ProfileMenu> {
 //Creates the main container for holding the user's ratings collections
 //Located on these pages: user_ratings
 class UserList extends StatefulWidget {
-  final int numRatings;
   final String title, type;
-  UserList(
-      {required this.numRatings,
-      required this.title,
-      required this.type,
-      super.key});
+  UserList({required this.title, required this.type, super.key});
 
   @override
   State<UserList> createState() => _UserListState();
@@ -273,24 +268,30 @@ class _UserListState extends State<UserList> {
                 .collection('accounts')
                 .doc(DataBase().getUid())
                 .collection(widget.type)
+                .where('rating', isNull: false)
                 .snapshots(),
             builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return Container(
-                  child: const Center(
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                const Center(child: CircularProgressIndicator());
+              } else if (snapshot.connectionState == ConnectionState.active) {
+                if (!snapshot.hasData) {
+                  return const Center(
                     child: Text('No Data'),
+                  );
+                }
+                return Column(
+                  children: List.generate(
+                    snapshot.data!.size,
+                    (index) => TitleAndRating(
+                      rating: snapshot.data!.docs[index]['rating'],
+                      musicTitle: snapshot.data!.docs[index]['title'],
+                      artist: snapshot.data!.docs[index]['artist'],
+                    ),
                   ),
                 );
               }
-              return Column(
-                children: List.generate(
-                  snapshot.data!.size,
-                  (index) => TitleAndRating(
-                    rating: snapshot.data!.docs[index]['rating'],
-                    trackTitle: snapshot.data!.docs[index]['title'],
-                    artist: snapshot.data!.docs[index]['artist'],
-                  ),
-                ),
+              return const Center(
+                child: Text('No ratings found'),
               );
             },
           ),
@@ -328,6 +329,7 @@ class _UserReviewListState extends State<UserReviewList> {
                 .collection('accounts')
                 .doc(DataBase().getUid())
                 .collection(widget.type)
+                .where('review', isNull: false)
                 .snapshots(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
@@ -357,76 +359,70 @@ class _UserReviewListState extends State<UserReviewList> {
 //Located on user_ratings
 class TitleAndRating extends StatelessWidget {
   final double rating;
-  final String trackTitle;
+  final String musicTitle;
   final String artist;
   TitleAndRating(
       {required this.rating,
-      this.trackTitle = 'Untitled',
-      this.artist = 'Unknown',
+      required this.musicTitle,
+      required this.artist,
       super.key});
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Row(
-        children: [
-          Container(
-            margin: const EdgeInsets.only(right: 20.0),
-            width: 0.55 * screenWidth,
-            height: 40.0,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10.0),
-              color: bbarGray,
-            ),
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          trackTitle,
-                          style: const TextStyle(
-                              fontStyle: FontStyle.italic,
-                              fontWeight: FontWeight.bold,
-                              color: buttonRed,
-                              fontSize: 17.0),
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.only(left: 5.0, right: 5.0),
-                          child: Text('by',
-                              style: TextStyle(
-                                fontSize: 17.0,
-                                color: purple,
-                              )),
-                        ),
-                        Text(
-                          artist,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 17.0,
-                            color: purple,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+      child: Container(
+        height: 80.0,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10.0),
+          color: bbarGray,
+        ),
+        child: SingleChildScrollView(
+            child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                musicTitle,
+                style: const TextStyle(
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.bold,
+                    color: buttonRed,
+                    fontSize: 18.0),
+                maxLines: 3,
               ),
-            ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.only(right: 5.0),
+                    child: Text('by',
+                        style: TextStyle(
+                          fontSize: 15.0,
+                          color: purple,
+                        )),
+                  ),
+                  Text(
+                    artist,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15.0,
+                      color: purple,
+                    ),
+                    maxLines: 3,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 5.0),
+              RateBar(
+                initRating: rating,
+                ignoreChange: true,
+                starSize: 20.0,
+              ),
+            ],
           ),
-          Expanded(
-            child: RateBar(
-              initRating: rating,
-              ignoreChange: true,
-              starSize: 20.0,
-            ),
-          ),
-        ],
+        )),
       ),
     );
   }
@@ -440,8 +436,8 @@ class TitleAndReview extends StatelessWidget {
   final String reviewText;
   TitleAndReview(
       {required this.reviewText,
-      this.trackTitle = 'Untitled',
-      this.artist = 'Unknown',
+      required this.trackTitle,
+      required this.artist,
       super.key});
 
   @override
@@ -455,7 +451,7 @@ class TitleAndReview extends StatelessWidget {
             child: Container(
               margin: const EdgeInsets.only(left: 8.0, right: 8.0),
               width: screenWidth,
-              height: 70.0,
+              height: 100.0,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10.0),
                 color: bbarGray,
@@ -466,38 +462,31 @@ class TitleAndReview extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        children: [
-                          Text(
-                            trackTitle,
-                            style: const TextStyle(
-                                fontStyle: FontStyle.italic,
-                                fontWeight: FontWeight.bold,
-                                color: buttonRed,
-                                fontSize: 17.0),
-                          ),
-                          const Padding(
-                            padding: EdgeInsets.only(left: 5.0, right: 5.0),
-                            child: Text('by',
-                                style: TextStyle(
-                                  fontSize: 17.0,
-                                  color: purple,
-                                )),
-                          ),
-                          Text(
-                            artist,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 17.0,
-                              color: purple,
-                            ),
-                          ),
-                        ],
+                      Text(
+                        trackTitle,
+                        style: const TextStyle(
+                            fontStyle: FontStyle.italic,
+                            fontWeight: FontWeight.bold,
+                            color: buttonRed,
+                            fontSize: 20.0),
+                        maxLines: 3,
+                      ),
+                      Text(
+                        artist,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15.0,
+                          color: purple,
+                        ),
+                        maxLines: 3,
+                      ),
+                      const SizedBox(
+                        height: 5.0,
                       ),
                       Text(
                         reviewText,
                         style: const TextStyle(
-                            fontSize: 15.0, color: Colors.black),
+                            fontSize: 18.0, color: Colors.black),
                       ),
                     ],
                   ),
