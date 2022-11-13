@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:jukeboxd/services/firebase.dart';
 import 'package:jukeboxd/utils/colors.dart';
+import 'package:jukeboxd/screens/album_page.dart';
+import 'package:jukeboxd/screens/song_page.dart';
 import 'package:jukeboxd/utils/custom_widgets/rating_widget.dart';
 import 'package:spotify/spotify.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -121,6 +123,40 @@ class ArtistList extends StatelessWidget {
                         ),
                       ),
                       trailing: Icon(Icons.star_border_outlined),
+                      onTap: () {
+                        switch (musicCollection.elementAt(index).type) {
+                          case "album":
+                            {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => AlbumPage(
+                                    albumId: musicCollection
+                                        .elementAt(index)
+                                        .id
+                                        .toString(),
+                                  ),
+                                ),
+                              );
+                            }
+                            break;
+                          case 'track':
+                            {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => SongPage(
+                                    trackId: musicCollection
+                                        .elementAt(index)
+                                        .id
+                                        .toString(),
+                                  ),
+                                ),
+                              );
+                            }
+                            break;
+                        }
+                      },
                     );
                   },
                 ),
@@ -175,6 +211,17 @@ class AlbumList extends StatelessWidget {
                           child: Text(
                               album.tracks!.elementAt(index).name.toString())),
                       trailing: Icon(Icons.star_border_outlined),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SongPage(
+                              trackId:
+                                  album.tracks!.elementAt(index).id.toString(),
+                            ),
+                          ),
+                        );
+                      },
                     );
                   },
                 ),
