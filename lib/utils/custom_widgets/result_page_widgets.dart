@@ -1,5 +1,7 @@
 /* Custom widgets used for result pages of these types: album, song, artist */
 import 'package:flutter/material.dart';
+import 'package:jukeboxd/screens/album_page.dart';
+import 'package:jukeboxd/screens/song_page.dart';
 import 'package:jukeboxd/services/firebase.dart';
 import 'package:jukeboxd/utils/colors.dart';
 import 'package:jukeboxd/screens/album_page.dart';
@@ -117,15 +119,16 @@ class ArtistList extends StatelessWidget {
                   itemBuilder: (context, index) {
                     return ListTile(
                       leading: Text(
-                        musicCollection.elementAt(index).toString(),
+                        musicCollection.elementAt(index).name.toString(),
                         style: const TextStyle(
                           color: purple,
                         ),
                       ),
                       trailing: Icon(Icons.star_border_outlined),
                       onTap: () {
-                        switch (musicCollection.elementAt(index).type) {
-                          case "album":
+                        switch (
+                            musicCollection!.elementAt(index).type.toString()) {
+                          case 'album':
                             {
                               Navigator.push(
                                 context,

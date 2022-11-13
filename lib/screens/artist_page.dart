@@ -18,9 +18,9 @@ class ArtistPage extends StatefulWidget {
 class _ArtistPageState extends State<ArtistPage> {
   Artist artist = Artist();
   Iterable topTracks = [];
-  List TrackNames = [];
+  List<Track> TrackNames = [];
   List TestAlbums = [];
-  List artistAlbums = [];
+  List<Album> artistAlbums = [];
   var imageUrl = '';
 
   var countryCode = 'US';
@@ -30,7 +30,7 @@ class _ArtistPageState extends State<ArtistPage> {
     RemoteService().getArtist(artistId).then((value) {
       setState(() {
         artist = value!;
-        imageUrl = value!.images!.first.url.toString();
+        imageUrl = value.images!.first.url.toString();
       });
     });
   }
@@ -41,11 +41,11 @@ class _ArtistPageState extends State<ArtistPage> {
       setState(() {
         topTracks = value;
         topTracks.toList();
-        TrackNames.add(value.elementAt(0).name);
-        TrackNames.add(value.elementAt(1).name);
-        TrackNames.add(value.elementAt(2).name);
-        TrackNames.add(value.elementAt(3).name);
-        TrackNames.add(value.elementAt(4).name);
+        TrackNames.add(value.elementAt(0));
+        TrackNames.add(value.elementAt(1));
+        TrackNames.add(value.elementAt(2));
+        TrackNames.add(value.elementAt(3));
+        TrackNames.add(value.elementAt(4));
       });
     });
   }
@@ -56,11 +56,11 @@ class _ArtistPageState extends State<ArtistPage> {
       setState(() {
         TestAlbums = value;
         TestAlbums.toList();
-        artistAlbums.add(value[0].name.toString());
-        artistAlbums.add(value[1].name.toString());
-        artistAlbums.add(value[2].name.toString());
-        artistAlbums.add(value[3].name.toString());
-        artistAlbums.add(value[4].name.toString());
+        artistAlbums.add(value[0]);
+        artistAlbums.add(value[1]);
+        artistAlbums.add(value[2]);
+        artistAlbums.add(value[3]);
+        artistAlbums.add(value[4]);
       });
     });
   }
