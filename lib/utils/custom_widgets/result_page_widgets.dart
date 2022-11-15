@@ -4,8 +4,6 @@ import 'package:jukeboxd/screens/album_page.dart';
 import 'package:jukeboxd/screens/song_page.dart';
 import 'package:jukeboxd/services/firebase.dart';
 import 'package:jukeboxd/utils/colors.dart';
-import 'package:jukeboxd/screens/album_page.dart';
-import 'package:jukeboxd/screens/song_page.dart';
 import 'package:jukeboxd/utils/custom_widgets/rating_widget.dart';
 import 'package:spotify/spotify.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -124,7 +122,7 @@ class ArtistList extends StatelessWidget {
                           color: purple,
                         ),
                       ),
-                      trailing: Icon(Icons.star_border_outlined),
+                      trailing: Icon(Icons.keyboard_arrow_right_sharp),
                       onTap: () {
                         switch (
                             musicCollection!.elementAt(index).type.toString()) {
@@ -213,7 +211,7 @@ class AlbumList extends StatelessWidget {
                           width: 200,
                           child: Text(
                               album.tracks!.elementAt(index).name.toString())),
-                      trailing: Icon(Icons.star_border_outlined),
+                      trailing: Icon(Icons.keyboard_arrow_right_sharp),
                       onTap: () {
                         Navigator.push(
                           context,

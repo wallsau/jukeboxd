@@ -173,8 +173,17 @@ class CustomSearchDelegate extends SearchDelegate {
                       },
                     )
                   : img.Image.asset('images/jukeboxd.jpg'),
-              title: Text(result!.name.toString()),
-              subtitle: Text(result!.id.toString()),
+              title: Text(
+                result!.name.toString(),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+              subtitle: Text(
+                result!.id.toString(),
+                style: TextStyle(color: bbarGray),
+              ),
               trailing: Text(result!.type.toString()),
               onTap: () {
                 switch (result!.type.toString().toLowerCase()) {
@@ -225,7 +234,7 @@ class CustomSearchDelegate extends SearchDelegate {
           if (containsSearch != true) {
             final defaultSearchHistory = [
               'The Beatles',
-              'Miachael Jackson',
+              'Michael Jackson',
               'Stevie Wonder',
               'The Rolling Stones',
               'James Brown',
@@ -248,6 +257,7 @@ class CustomSearchDelegate extends SearchDelegate {
                     onTap: () {
                       query = suggestions[index];
                     },
+                    textColor: Colors.white,
                   );
                 }));
           }
@@ -268,6 +278,7 @@ class CustomSearchDelegate extends SearchDelegate {
                   onTap: () {
                     query = suggestions[index];
                   },
+                  textColor: Colors.white,
                 );
               }));
         }));
