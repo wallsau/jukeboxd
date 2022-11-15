@@ -31,9 +31,9 @@ class _SearchPageState extends State<SearchPage> {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      backgroundColor: purple,
+      backgroundColor: bgGray,
       appBar: AppBar(
-        backgroundColor: Colors.purple,
+        backgroundColor: purple,
         actions: [
           IconButton(
             icon: const Icon(Icons.search),
@@ -48,13 +48,6 @@ class _SearchPageState extends State<SearchPage> {
       ),
       body: Container(
         width: screenWidth,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF3279e2), Colors.purple],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
         child: Column(
           children: [
             const Expanded(
@@ -161,22 +154,15 @@ class CustomSearchDelegate extends SearchDelegate {
         ),
       );
 
-  Widget buildResultsSuccess(results) {
+  Widget buildResultsSuccess(List<dynamic>? results) {
     final suggestArr = [query];
     _storeHistory(suggestArr);
     return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Color(0xFF3279e2), Colors.purple],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ),
-      ),
+      color: bgGray,
       child: ListView.builder(
-          itemCount: results.length,
+          itemCount: results!.length,
           itemBuilder: (context, index) {
             final result = results[index];
-
             return ListTile(
               leading: (result!.type.toString() != 'track')
                   ? img.Image.network(
@@ -231,42 +217,25 @@ class CustomSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Color(0xFF3279e2), Colors.purple],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ),
-      ),
-      child: StreamBuilder(
-          stream: db.collection('accounts').doc(uid).snapshots(),
-          builder: ((context, snapshot) {
-            final containsSearch =
-                snapshot.data?.data()?.containsKey('search history');
-            if (containsSearch != true) {
-              final defaultSearchHistory = ['Cher', 'Metallica', 'Drake'];
-              final List suggestions = defaultSearchHistory.where((element) {
-                return element.toLowerCase().contains(
-                      query.toLowerCase(),
-                    );
-              }).toList();
-              return ListView.builder(
-                  itemCount: suggestions.length,
-                  itemBuilder: ((context, index) {
-                    return ListTile(
-                      title: Text(suggestions[index]),
-                      onTap: () {
-                        query = suggestions[index];
-                      },
-                    );
-                  }));
-            }
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const CircularProgressIndicator();
-            }
-            final List searchHistory = snapshot.data!.get('search history');
-            final List suggestions = searchHistory.where((element) {
+    return StreamBuilder(
+        stream: db.collection('accounts').doc(uid).snapshots(),
+        builder: ((context, snapshot) {
+          final containsSearch =
+              snapshot.data?.data()?.containsKey('search history');
+          if (containsSearch != true) {
+            final defaultSearchHistory = [
+              'The Beatles',
+              'Miachael Jackson',
+              'Stevie Wonder',
+              'The Rolling Stones',
+              'James Brown',
+              'Led Zeppelin',
+              'Bob Dylan',
+              'Jimi Hendrix',
+              'Prince',
+              'Bob Marley'
+            ];
+            final List suggestions = defaultSearchHistory.where((element) {
               return element.toLowerCase().contains(
                     query.toLowerCase(),
                   );
@@ -281,8 +250,27 @@ class CustomSearchDelegate extends SearchDelegate {
                     },
                   );
                 }));
-          })),
-    );
+          }
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator();
+          }
+          final List searchHistory = snapshot.data!.get('search history');
+          final List suggestions = searchHistory.where((element) {
+            return element.toLowerCase().contains(
+                  query.toLowerCase(),
+                );
+          }).toList();
+          return ListView.builder(
+              itemCount: suggestions.length,
+              itemBuilder: ((context, index) {
+                return ListTile(
+                  title: Text(suggestions[index]),
+                  onTap: () {
+                    query = suggestions[index];
+                  },
+                );
+              }));
+        }));
   }
 
   Future _storeHistory(searchTerm) async {

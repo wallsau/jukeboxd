@@ -5,7 +5,6 @@ import 'package:jukeboxd/screens/login_page.dart';
 import 'package:jukeboxd/screens/search_page.dart';
 import 'package:jukeboxd/utils/colors.dart';
 import 'package:jukeboxd/utils/custom_widgets/user_page_widgets.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 
 import '../services/firebase.dart';
 

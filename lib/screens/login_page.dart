@@ -107,13 +107,13 @@ class _LoginPageState extends State<LoginPage> {
                             } on FirebaseAuthException catch (error) {
                               errorMessage = error.message!;
                             }
-                            setState(() {
-                              isLoading = false;
-                            });
                             if (!mounted) return;
                             Navigator.of(context).push(MaterialPageRoute(
                                 builder: (context) => UserProfile()));
                           }
+                          setState(() {
+                            isLoading = false;
+                          });
                         },
                   child: isLoading
                       ? const CircularProgressIndicator(color: Colors.white)
