@@ -78,7 +78,10 @@ class _ArtistPageState extends State<ArtistPage> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: Text(artist.name.toString()),
+        title: (artist.name.toString().length > 32)
+            ? Text(artist.name.toString(), style: TextStyle(fontSize: 20.0))
+            : FittedBox(
+                fit: BoxFit.scaleDown, child: Text(artist.name.toString())),
         centerTitle: true,
       ),
       body: Center(

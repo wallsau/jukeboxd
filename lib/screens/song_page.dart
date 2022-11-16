@@ -130,7 +130,12 @@ class _SongPageState extends State<SongPage> {
       appBar: AppBar(
           title: (artistList.isEmpty)
               ? const Text('Placeholder')
-              : Text(track!.name.toString())),
+              : (track!.name.toString().length > 32)
+                  ? Text(track!.name.toString(),
+                      style: TextStyle(fontSize: 20.0))
+                  : FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(track!.name.toString()))),
       body: GestureDetector(
         onTap: () {
           FocusScope.of(context).unfocus();

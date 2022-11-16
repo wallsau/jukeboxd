@@ -80,7 +80,7 @@ class _Top5State extends State<Top5> {
             child: Padding(
               padding: EdgeInsets.all(8.0),
               child: Text(
-                "My Top 5",
+                "My Top 5 Albums",
                 style: TextStyle(color: bbarGray),
               ),
             ),
@@ -116,13 +116,6 @@ class _Top5State extends State<Top5> {
                 placeholder: (context, url) => CircularProgressIndicator(),
                 errorWidget: (context, url, error) => Icon(Icons.error),
               ),
-              /*Expanded(
-                child: Image(
-                  image: widget.pic5 as ImageProvider,
-                  width: 50.0,
-                  height: 50.0,
-                ),
-              ),*/
             ],
           ),
         ),

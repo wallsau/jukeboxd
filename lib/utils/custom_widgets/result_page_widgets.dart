@@ -528,7 +528,7 @@ class _InfoBlockState extends State<InfoBlock> {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
-        height: 150.0,
+        height: 175.0,
         width: screenWidth,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(40.0),
@@ -537,22 +537,63 @@ class _InfoBlockState extends State<InfoBlock> {
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Container(
-            height: 150,
+            height: 175,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(40.0),
               color: iconsGray,
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Center(
-                child: Text(
-                    "${widget.title} by ${widget.artist}\nCommunity score: ${widget.avgRating}",
-                    style: const TextStyle(
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.bold,
-                      color: purple,
-                    ),
-                    textAlign: TextAlign.center),
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                        child: Text(
+                          '${widget.title}',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontStyle: FontStyle.italic,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20.0,
+                              color: purple),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: Text(
+                          'by ${widget.artist}',
+                          style: TextStyle(
+                            fontSize: 20.0,
+                            color: bgGray,
+                          ),
+                        ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: Text('Community score:',
+                                style: const TextStyle(
+                                  fontSize: 20.0,
+                                  color: bgGray,
+                                ),
+                                textAlign: TextAlign.center),
+                          ),
+                          Text('${widget.avgRating}/5.0',
+                              style: const TextStyle(
+                                fontSize: 25.0,
+                                fontWeight: FontWeight.bold,
+                                color: purple,
+                              )),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
           ),

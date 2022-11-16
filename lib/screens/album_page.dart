@@ -109,7 +109,13 @@ class _AlbumPageState extends State<AlbumPage> {
       appBar: AppBar(
         title: (album.name == null)
             ? const Text('Loading...')
-            : Text(album.name.toString()),
+            : (album.name.toString().length > 32)
+                ? Text(
+                    album.name.toString(),
+                    style: TextStyle(fontSize: 20.0),
+                  )
+                : FittedBox(
+                    fit: BoxFit.scaleDown, child: Text(album.name.toString())),
         centerTitle: true,
       ),
       body: GestureDetector(
