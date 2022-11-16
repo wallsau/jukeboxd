@@ -70,16 +70,22 @@ class _SearchPageState extends State<SearchPage> {
                     );
                   },
                   style: OutlinedButton.styleFrom(
-                    backgroundColor: Colors.white,
+                    backgroundColor: purple,
                   ),
-                  child: const Text('Return to Profile'),
+                  child: const Text(
+                    'Return to Profile',
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
                 OutlinedButton(
                   onPressed: _clearHistory,
                   style: OutlinedButton.styleFrom(
-                    backgroundColor: Colors.white,
+                    backgroundColor: purple,
                   ),
-                  child: const Text('Clear Search History'),
+                  child: const Text(
+                    'Clear Search History',
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
               ],
             )
@@ -155,6 +161,7 @@ class CustomSearchDelegate extends SearchDelegate {
       );
 
   Widget buildResultsSuccess(List<dynamic>? results) {
+    String imageUrl = '';
     final suggestArr = [query];
     _storeHistory(suggestArr);
     return Container(
@@ -163,13 +170,21 @@ class CustomSearchDelegate extends SearchDelegate {
           itemCount: results!.length,
           itemBuilder: (context, index) {
             final result = results[index];
+            if (result.type.toString() != 'track') {
+              if (result.images.isNotEmpty) {
+                imageUrl = result.images[0].url.toString();
+                print(imageUrl + result.name.toString() + result.id.toString());
+              } else {
+                imageUrl = 'https://via.placeholder.com/150';
+              }
+            }
             return ListTile(
-              leading: (result!.type.toString() != 'track')
-                  ? img.Image.network(
-                      result!.images![0].url.toString(),
-                      errorBuilder: (BuildContext context, Object exception,
-                          StackTrace? strackTrace) {
-                        return const Text('Error');
+              leading: (result!.type.toString() != 'track' && imageUrl != '')
+                  ? FadeInImage.assetNetwork(
+                      placeholder: 'images/jukeboxd.jpg',
+                      image: imageUrl,
+                      imageErrorBuilder: (context, error, stackTrace) {
+                        return img.Image.asset('images/Jukeboxd.jpg');
                       },
                     )
                   : img.Image.asset('images/jukeboxd.jpg'),
