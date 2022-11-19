@@ -14,8 +14,8 @@ class UserReviews extends StatelessWidget {
           child: Center(
               child: Column(
             children: [
-              UserReviewList(title: title, type: 'track'),
-              UserReviewList(title: title, type: 'album')
+              UserReviewList(title: 'Albums', type: 'album'),
+              UserReviewList(title: 'Songs', type: 'track')
             ],
           )),
         ));

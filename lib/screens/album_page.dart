@@ -43,7 +43,7 @@ class _AlbumPageState extends State<AlbumPage> {
         .collection('album')
         .doc(widget.albumId)
         .get()
-        .then((snapshot) async {
+        .then((snapshot) {
       if (snapshot.exists) {
         setState(() {
           rating = snapshot.data()!['rating'];
@@ -68,7 +68,7 @@ class _AlbumPageState extends State<AlbumPage> {
   Future _getAlbumStorage(String id) async {
     final albumDB =
         FirebaseFirestore.instance.collection('albums').doc(id).get();
-    await albumDB.then((snapshot) async {
+    await albumDB.then((snapshot) {
       if (snapshot.exists) {
         setState(() {
           allReviews = snapshot.data()!['allReviews'];
@@ -109,7 +109,13 @@ class _AlbumPageState extends State<AlbumPage> {
       appBar: AppBar(
         title: (album.name == null)
             ? const Text('Loading...')
-            : Text(album.name.toString()),
+            : (album.name.toString().length > 32)
+                ? Text(
+                    album.name.toString(),
+                    style: TextStyle(fontSize: 20.0),
+                  )
+                : FittedBox(
+                    fit: BoxFit.scaleDown, child: Text(album.name.toString())),
         centerTitle: true,
       ),
       body: GestureDetector(
@@ -148,7 +154,9 @@ class _AlbumPageState extends State<AlbumPage> {
                 ),
                 InfoBlock(
                   title: album.name.toString(),
-                  artist: album.artists.toString(),
+                  artist: (album.name == null)
+                      ? ''
+                      : album.artists![0].name.toString(),
                   avgRating: avgRating,
                 ),
                 AlbumList(album: album),

@@ -64,7 +64,7 @@ class _SongPageState extends State<SongPage> {
         .collection('track')
         .doc(widget.trackId)
         .get()
-        .then((snapshot) async {
+        .then((snapshot) {
       if (snapshot.exists) {
         setState(() {
           rating = snapshot.data()!['rating'];
@@ -89,7 +89,7 @@ class _SongPageState extends State<SongPage> {
   Future _getSongStorage(String id) async {
     final albumDB =
         FirebaseFirestore.instance.collection('songs').doc(id).get();
-    await albumDB.then((snapshot) async {
+    await albumDB.then((snapshot) {
       if (snapshot.exists) {
         setState(() {
           allReviews = snapshot.data()!['allReviews'];
@@ -130,7 +130,12 @@ class _SongPageState extends State<SongPage> {
       appBar: AppBar(
           title: (artistList.isEmpty)
               ? const Text('Placeholder')
-              : Text(track!.name.toString())),
+              : (track!.name.toString().length > 32)
+                  ? Text(track!.name.toString(),
+                      style: TextStyle(fontSize: 20.0))
+                  : FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(track!.name.toString()))),
       body: GestureDetector(
         onTap: () {
           FocusScope.of(context).unfocus();

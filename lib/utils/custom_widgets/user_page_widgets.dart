@@ -77,7 +77,7 @@ class _Top5State extends State<Top5> {
             child: Padding(
               padding: EdgeInsets.all(8.0),
               child: Text(
-                "My Top 5",
+                "My Top 5 Albums",
                 style: TextStyle(color: bbarGray),
               ),
             ),
@@ -113,13 +113,6 @@ class _Top5State extends State<Top5> {
                 placeholder: (context, url) => CircularProgressIndicator(),
                 errorWidget: (context, url, error) => Icon(Icons.error),
               ),
-              /*Expanded(
-                child: Image(
-                  image: widget.pic5 as ImageProvider,
-                  width: 50.0,
-                  height: 50.0,
-                ),
-              ),*/
             ],
           ),
         ),
@@ -321,30 +314,41 @@ class _UserReviewListState extends State<UserReviewList> {
             borderRadius: BorderRadius.circular(10.0),
             color: purple,
           ),
-          child: StreamBuilder(
-            stream: FirebaseFirestore.instance
-                .collection('accounts')
-                .doc(DataBase().getUid())
-                .collection(widget.type)
-                .where('review', isNull: false)
-                .snapshots(),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return Container(
-                  child: const Center(child: Text('No Data')),
-                );
-              }
-              return Column(
-                children: List.generate(
-                  snapshot.data!.size,
-                  (index) => TitleAndReview(
-                    reviewText: snapshot.data!.docs[index]['review'],
-                    trackTitle: snapshot.data!.docs[index]['title'],
-                    artist: snapshot.data!.docs[index]['artist'],
-                  ),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Text(
+                  widget.title,
+                  style: TextStyle(fontSize: 25.0),
                 ),
-              );
-            },
+              ),
+              StreamBuilder(
+                stream: FirebaseFirestore.instance
+                    .collection('accounts')
+                    .doc(DataBase().getUid())
+                    .collection(widget.type)
+                    .where('review', isNull: false)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return Container(
+                      child: const Center(child: Text('No Data')),
+                    );
+                  }
+                  return Column(
+                    children: List.generate(
+                      snapshot.data!.size,
+                      (index) => TitleAndReview(
+                        reviewText: snapshot.data!.docs[index]['review'],
+                        trackTitle: snapshot.data!.docs[index]['title'],
+                        artist: snapshot.data!.docs[index]['artist'],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ],
           ),
         ),
       )
