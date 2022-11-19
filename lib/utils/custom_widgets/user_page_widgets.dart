@@ -8,6 +8,7 @@ import 'package:jukeboxd/utils/colors.dart';
 import 'package:jukeboxd/utils/custom_widgets/rating_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_profile_picture/flutter_profile_picture.dart';
 
 //User profile picture and name
 /*Will need to replace AssetImages later*/
@@ -31,11 +32,7 @@ class UserHeader extends StatelessWidget {
           padding: const EdgeInsets.all(10.0),
           margin: const EdgeInsets.all(10.0),
           alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: Colors.blueGrey,
-            shape: BoxShape.circle,
-            image: DecorationImage(image: userProfile),
-          ),
+          child: ProfilePicture(name: username, radius: 31, fontsize: 20),
         ),
         Text(
           username,
