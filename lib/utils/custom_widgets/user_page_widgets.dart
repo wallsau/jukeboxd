@@ -1,5 +1,4 @@
 /* Widgets associated with user_profile, user_ratings, and user_reviews */
-import 'dart:async';
 import 'package:jukeboxd/services/firebase.dart';
 import 'package:flutter/material.dart';
 import 'package:jukeboxd/screens/user_ratings.dart';

@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:collection';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:jukeboxd/utils/colors.dart';
 import 'package:jukeboxd/utils/custom_widgets/result_page_widgets.dart';
 import 'package:jukeboxd/utils/custom_widgets/rating_widget.dart';
 import '../services/firebase.dart';
@@ -136,53 +135,47 @@ class _SongPageState extends State<SongPage> {
                   : FittedBox(
                       fit: BoxFit.scaleDown,
                       child: Text(track!.name.toString()))),
-      body: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).unfocus();
-          TextEditingController().clear();
-        },
-        child: SingleChildScrollView(
-          child: Center(
-            child: Column(
-              children: [
-                SongImage(
-                  imageUrl: imageUrl,
-                ),
-                RateBar(
-                  initRating: rating,
-                  ignoreChange: false,
-                  starSize: 50.0,
-                  id: widget.trackId,
-                  type: (artistList.isEmpty) ? 'track' : track!.type!,
-                  artist: (artistList.isEmpty)
-                      ? ''
-                      : track!.artists![0].name.toString(),
-                  title: (artistList.isEmpty) ? '' : track!.name,
-                  imageUrl: imageUrl,
-                  typeCollection: 'songs',
-                ),
-                BlockReviewWidget(
-                  id: widget.trackId,
-                  type: track!.type,
-                  initReview: review,
-                  artist: (artistList.isEmpty)
-                      ? ''
-                      : track!.artists![0].name.toString(),
-                  title: (artistList.isEmpty) ? '' : track!.name,
-                  typeCollection: 'songs',
-                ),
-                InfoBlock(
-                  title: (artistList.isEmpty) ? 'Loading...' : track!.name!,
-                  artist: artistList,
-                  avgRating: avgRating,
-                ),
-                ReviewSection(
-                  comments: allReviews,
-                  scores: allRatings
-                      .map((key, value) => MapEntry(key, value?.toDouble())),
-                ),
-              ],
-            ),
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            children: [
+              SongImage(
+                imageUrl: imageUrl,
+              ),
+              RateBar(
+                initRating: rating,
+                ignoreChange: false,
+                starSize: 50.0,
+                id: widget.trackId,
+                type: (artistList.isEmpty) ? 'track' : track!.type!,
+                artist: (artistList.isEmpty)
+                    ? ''
+                    : track!.artists![0].name.toString(),
+                title: (artistList.isEmpty) ? '' : track!.name,
+                imageUrl: imageUrl,
+                typeCollection: 'songs',
+              ),
+              BlockReviewWidget(
+                id: widget.trackId,
+                type: track!.type,
+                initReview: review,
+                artist: (artistList.isEmpty)
+                    ? ''
+                    : track!.artists![0].name.toString(),
+                title: (artistList.isEmpty) ? '' : track!.name,
+                typeCollection: 'songs',
+              ),
+              InfoBlock(
+                title: (artistList.isEmpty) ? 'Loading...' : track!.name!,
+                artist: artistList,
+                avgRating: avgRating,
+              ),
+              ReviewSection(
+                comments: allReviews,
+                scores: allRatings
+                    .map((key, value) => MapEntry(key, value?.toDouble())),
+              ),
+            ],
           ),
         ),
       ),
