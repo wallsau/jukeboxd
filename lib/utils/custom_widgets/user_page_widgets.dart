@@ -10,7 +10,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_profile_picture/flutter_profile_picture.dart';
 
 //User profile picture and name
-/*Will need to replace AssetImages later*/
 //Located on these pages: user_profile
 class UserHeader extends StatelessWidget {
   final AssetImage userProfile;
