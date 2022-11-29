@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:collection';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:jukeboxd/screens/user_profile.dart';
 import 'package:jukeboxd/utils/custom_widgets/result_page_widgets.dart';
 import 'package:jukeboxd/utils/custom_widgets/rating_widget.dart';
 import '../services/firebase.dart';
@@ -175,6 +176,12 @@ class _SongPageState extends State<SongPage> {
                 scores: allRatings
                     .map((key, value) => MapEntry(key, value?.toDouble())),
               ),
+              ElevatedButton(
+                  onPressed: (() {
+                    Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) => UserProfile()));
+                  }),
+                  child: const Text('Return to Profile'))
             ],
           ),
         ),

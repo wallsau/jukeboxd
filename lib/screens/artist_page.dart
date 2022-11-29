@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jukeboxd/screens/user_profile.dart';
 import 'package:spotify/spotify.dart';
 import 'package:jukeboxd/services/remote_services.dart';
 import 'package:jukeboxd/utils/custom_widgets/result_page_widgets.dart';
@@ -86,6 +87,12 @@ class _ArtistPageState extends State<ArtistPage> {
               CoverImage(imageUrl: imageUrl),
               ArtistList(title: 'Songs', musicCollection: TrackNames),
               ArtistList(title: 'Albums', musicCollection: artistAlbums),
+              ElevatedButton(
+                  onPressed: (() {
+                    Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) => UserProfile()));
+                  }),
+                  child: const Text('Return to Profile'))
             ],
           ),
         ),

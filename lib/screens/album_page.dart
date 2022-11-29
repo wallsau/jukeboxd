@@ -1,6 +1,7 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
+import 'package:jukeboxd/screens/user_profile.dart';
 import 'package:spotify/spotify.dart';
 import 'package:jukeboxd/services/remote_services.dart';
 import 'package:jukeboxd/utils/custom_widgets/result_page_widgets.dart';
@@ -160,6 +161,12 @@ class _AlbumPageState extends State<AlbumPage> {
                 scores: allRatings
                     .map((key, value) => MapEntry(key, value?.toDouble())),
               ),
+              ElevatedButton(
+                  onPressed: (() {
+                    Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) => UserProfile()));
+                  }),
+                  child: const Text('Return to Profile'))
             ],
           ),
         ),
