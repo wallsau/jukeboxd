@@ -196,10 +196,25 @@ class CustomSearchDelegate extends SearchDelegate {
                 ),
               ),
               subtitle: Text(
-                result!.id.toString(),
+                //result!.id.toString(),
+                result!.type.toString(),
                 style: TextStyle(color: bbarGray),
               ),
-              trailing: Text(result!.type.toString()),
+              //trailing: Text(result!.type.toString()),
+              trailing: (result!.type.toString().toLowerCase() == 'artist')
+                  ? Icon(
+                      Icons.person,
+                      color: Colors.white,
+                    )
+                  : (result!.type.toString().toLowerCase() == 'album')
+                      ? Icon(
+                          Icons.album,
+                          color: Colors.white,
+                        )
+                      : Icon(
+                          Icons.music_note,
+                          color: Colors.white,
+                        ),
               onTap: () {
                 switch (result!.type.toString().toLowerCase()) {
                   case 'artist':

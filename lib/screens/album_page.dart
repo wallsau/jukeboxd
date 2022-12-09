@@ -1,6 +1,7 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
+import 'package:jukeboxd/screens/user_profile.dart';
 import 'package:spotify/spotify.dart';
 import 'package:jukeboxd/services/remote_services.dart';
 import 'package:jukeboxd/utils/custom_widgets/result_page_widgets.dart';
@@ -118,55 +119,55 @@ class _AlbumPageState extends State<AlbumPage> {
                     fit: BoxFit.scaleDown, child: Text(album.name.toString())),
         centerTitle: true,
       ),
-      body: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).unfocus();
-          TextEditingController().clear();
-        },
-        child: SingleChildScrollView(
-          child: Center(
-            child: Column(
-              children: [
-                CoverImage(imageUrl: imageUrl),
-                RateBar(
-                  initRating: rating,
-                  ignoreChange: false,
-                  starSize: 50.0,
-                  id: widget.albumId,
-                  type: 'album',
-                  title: album.name,
-                  artist: (album.name == null)
-                      ? ''
-                      : album.artists![0].name.toString(),
-                  imageUrl: (album.name == null) ? '' : album.images!.first.url,
-                  typeCollection: 'albums',
-                ),
-                BlockReviewWidget(
-                  id: widget.albumId,
-                  type: album.type,
-                  initReview: review,
-                  artist: (album.name == null)
-                      ? ''
-                      : album.artists![0].name.toString(),
-                  title: album.name,
-                  imageUrl: (album.name == null) ? '' : album.images!.first.url,
-                  typeCollection: 'albums',
-                ),
-                InfoBlock(
-                  title: album.name.toString(),
-                  artist: (album.name == null)
-                      ? ''
-                      : album.artists![0].name.toString(),
-                  avgRating: avgRating,
-                ),
-                AlbumList(album: album),
-                ReviewSection(
-                  comments: allReviews,
-                  scores: allRatings
-                      .map((key, value) => MapEntry(key, value?.toDouble())),
-                ),
-              ],
-            ),
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            children: [
+              CoverImage(imageUrl: imageUrl),
+              RateBar(
+                initRating: rating,
+                ignoreChange: false,
+                starSize: 50.0,
+                id: widget.albumId,
+                type: 'album',
+                title: album.name,
+                artist: (album.name == null)
+                    ? ''
+                    : album.artists![0].name.toString(),
+                imageUrl: (album.name == null) ? '' : album.images!.first.url,
+                typeCollection: 'albums',
+              ),
+              BlockReviewWidget(
+                id: widget.albumId,
+                type: album.type,
+                initReview: review,
+                artist: (album.name == null)
+                    ? ''
+                    : album.artists![0].name.toString(),
+                title: album.name,
+                imageUrl: (album.name == null) ? '' : album.images!.first.url,
+                typeCollection: 'albums',
+              ),
+              InfoBlock(
+                title: album.name.toString(),
+                artist: (album.name == null)
+                    ? ''
+                    : album.artists![0].name.toString(),
+                avgRating: avgRating,
+              ),
+              AlbumList(album: album),
+              ReviewSection(
+                comments: allReviews,
+                scores: allRatings
+                    .map((key, value) => MapEntry(key, value?.toDouble())),
+              ),
+              ElevatedButton(
+                  onPressed: (() {
+                    Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) => UserProfile()));
+                  }),
+                  child: const Text('Return to Profile'))
+            ],
           ),
         ),
       ),

@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:jukeboxd/screens/user_profile.dart';
 import 'package:spotify/spotify.dart';
 import 'package:jukeboxd/services/remote_services.dart';
-import 'package:flutter/src/widgets/image.dart' as img;
-import 'package:spotify/src/models/_models.dart' as spotiyImg;
-import 'dart:async';
-import 'package:jukeboxd/utils/colors.dart';
 import 'package:jukeboxd/utils/custom_widgets/result_page_widgets.dart';
 
 class ArtistPage extends StatefulWidget {
@@ -91,6 +87,12 @@ class _ArtistPageState extends State<ArtistPage> {
               CoverImage(imageUrl: imageUrl),
               ArtistList(title: 'Songs', musicCollection: TrackNames),
               ArtistList(title: 'Albums', musicCollection: artistAlbums),
+              ElevatedButton(
+                  onPressed: (() {
+                    Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) => UserProfile()));
+                  }),
+                  child: const Text('Return to Profile'))
             ],
           ),
         ),
