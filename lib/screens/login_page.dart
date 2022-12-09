@@ -5,6 +5,7 @@ import 'package:jukeboxd/screens/user_profile.dart';
 import 'package:jukeboxd/utils/colors.dart';
 import 'package:jukeboxd/utils/validation.dart';
 
+//LoginPage contributed by Austin Walls
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 

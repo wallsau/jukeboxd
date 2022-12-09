@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:jukeboxd/utils/colors.dart';
 import 'package:jukeboxd/utils/validation.dart';
 
+//Signup Page contributed by Austin Walls
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
 

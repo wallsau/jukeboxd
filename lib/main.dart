@@ -6,6 +6,7 @@ import 'package:jukeboxd/screens/login_page.dart';
 import 'package:jukeboxd/screens/user_profile.dart';
 import 'package:jukeboxd/utils/colors.dart';
 
+//Contributed by Austin Walls
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();

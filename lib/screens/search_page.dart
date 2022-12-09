@@ -10,6 +10,7 @@ import 'dart:async';
 import 'package:jukeboxd/utils/colors.dart';
 import 'album_page.dart';
 
+//SearchPage screen contributed by Austin Walls
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key}) : super(key: key);
 
