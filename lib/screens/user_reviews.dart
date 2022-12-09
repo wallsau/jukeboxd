@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jukeboxd/utils/custom_widgets/user_page_widgets.dart';
 
+//User review screen contributed by Angie Ly
 class UserReviews extends StatelessWidget {
   UserReviews({required this.title, super.key});
   final String title;

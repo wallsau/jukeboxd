@@ -9,7 +9,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_profile_picture/flutter_profile_picture.dart';
 
-//User profile picture and name
+//User profile picture and name, contributed by Angie Ly
 //Located on these pages: user_profile
 class UserHeader extends StatelessWidget {
   final AssetImage userProfile;
@@ -42,7 +42,7 @@ class UserHeader extends StatelessWidget {
   }
 }
 
-//Images of top five rated
+//Images of top five rated, contributed by Angie Ly
 /*Will need to replace AssetImages later*/
 //Located on these pages: user_profile
 class Top5 extends StatefulWidget {
@@ -128,7 +128,7 @@ class _Top5State extends State<Top5> {
   }
 }
 
-//Menu containing options to view user collections
+//Menu containing options to view user collections, contributed by Angie Ly
 //Located on these pages: user_profile
 class ProfileMenu extends StatefulWidget {
   const ProfileMenu({
@@ -237,6 +237,7 @@ class _ProfileMenuState extends State<ProfileMenu> {
 }
 
 //Creates the main container for holding the user's ratings collections
+//contributed by Angie Ly
 //Located on these pages: user_ratings
 class UserList extends StatefulWidget {
   final String title, type;
@@ -298,6 +299,7 @@ class _UserListState extends State<UserList> {
 }
 
 //Creates the main container for holding the user's reviews
+//contributed by Angie Ly
 //Located on these pages: user_reviews
 class UserReviewList extends StatefulWidget {
   final String title, type;
@@ -351,7 +353,7 @@ class _UserReviewListState extends State<UserReviewList> {
   }
 }
 
-//Show the title of a song/album and a star rating
+//Show the title of a song/album and a star rating, contributed by Angie Ly
 //Located on user_ratings
 class TitleAndRating extends StatelessWidget {
   final double rating;
@@ -424,7 +426,7 @@ class TitleAndRating extends StatelessWidget {
   }
 }
 
-//Show the title of a song/album and a review
+//Show the title of a song/album and a review, contributed by Angie Ly
 //Located on user_reviews
 class TitleAndReview extends StatelessWidget {
   final String trackTitle;

@@ -8,6 +8,7 @@ import 'package:jukeboxd/utils/custom_widgets/user_page_widgets.dart';
 
 import '../services/firebase.dart';
 
+//UserProfile screen contributed by Angie Ly
 class UserProfile extends StatefulWidget {
   UserProfile({super.key});
 

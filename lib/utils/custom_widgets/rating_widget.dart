@@ -4,6 +4,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:jukeboxd/services/firebase.dart';
 import 'package:jukeboxd/utils/colors.dart';
 
+//Contributed by Angie Ly
 class RateBar extends StatefulWidget {
   RateBar({
     required this.initRating,

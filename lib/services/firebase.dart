@@ -50,6 +50,7 @@ class DataBase {
     final ratingMap = <String, double>{
       'rating': rating,
     };
+
     var infoMap = <String, String>{};
     if (imageUrl!.isEmpty) {
       infoMap = <String, String>{
@@ -63,6 +64,8 @@ class DataBase {
         'imageUrl': imageUrl
       };
     }
+
+    //userAndRatingMap and mapToAllRatings contributed by Angie Ly
     final userAndRatingMap = <dynamic, double>{userId: rating};
     final mapToAllRatings = <String, Map<dynamic, double>>{
       'allRatings': userAndRatingMap
@@ -71,10 +74,12 @@ class DataBase {
     final docRef =
         db.collection('accounts').doc(userId).collection(type!).doc(objectId);
     final collectionRef = db.collection(typeCollection!).doc(objectId);
+
     //Update accounts document
     await docRef.set(infoMap, SetOptions(merge: true));
     await docRef.set(ratingMap, SetOptions(merge: true));
-    //Update albums or songs document
+
+    //Update albums or songs document, contributed by Angie Ly
     await collectionRef.set(mapToAllRatings, SetOptions(merge: true));
   }
 
@@ -105,6 +110,8 @@ class DataBase {
     final docRef =
         db.collection('accounts').doc(userId).collection(type!).doc(objectId);
     docRef.update(deletion);
+
+    //deletion from song/album collection contributed by Angie Ly
     await db.collection(collectionType!).doc(objectId).set({
       'allReviews': {userId: FieldValue.delete()}
     }, SetOptions(merge: true));

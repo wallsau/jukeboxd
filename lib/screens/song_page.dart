@@ -9,6 +9,7 @@ import '../services/firebase.dart';
 import '../services/remote_services.dart';
 import 'package:spotify/spotify.dart';
 
+//SongPage contributed by Angie Ly
 class SongPage extends StatefulWidget {
   const SongPage({
     required this.trackId,
@@ -85,7 +86,7 @@ class _SongPageState extends State<SongPage> {
         .update(reviews);
   }
 
-//Get all reviews and rating for this page
+//Get all reviews and rating for this page, contributed by Angie Ly
   Future _getSongStorage(String id) async {
     final albumDB =
         FirebaseFirestore.instance.collection('songs').doc(id).get();
@@ -103,7 +104,7 @@ class _SongPageState extends State<SongPage> {
     });
   }
 
-//Return an average rating
+//Return an average rating, contributed by Angie Ly
   double _getAverage(Map ratings) {
     if (ratings.isEmpty) {
       return 0.0;

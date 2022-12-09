@@ -8,7 +8,7 @@ import 'package:jukeboxd/utils/custom_widgets/rating_widget.dart';
 import 'package:spotify/spotify.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-//Artist or album picture
+//Artist or album picture, contributed by Angie Ly
 //Found on: artist_page, album_page
 class CoverImage extends StatelessWidget {
   const CoverImage({
@@ -76,6 +76,7 @@ class SongImage extends StatelessWidget {
 }
 
 //Collection of albums or songs. Requires a title and a list of albums/songs
+//contributed by Angie Ly
 //Found on: artist_page
 class ArtistList extends StatelessWidget {
   ArtistList({required this.title, required this.musicCollection, super.key});
@@ -171,6 +172,7 @@ class ArtistList extends StatelessWidget {
 }
 
 //Collection of songs for an album. Requires a title and a list of songs
+//contributed by Angie Ly
 //Found on: album_page
 class AlbumList extends StatelessWidget {
   const AlbumList({required this.album, super.key});
@@ -236,6 +238,7 @@ class AlbumList extends StatelessWidget {
 }
 
 //Review function widget with a submit and delete button (nonfunctional)
+//contributed by Angie Ly
 //Located on these pages: song_page, album_page
 class BlockReviewWidget extends StatefulWidget {
   BlockReviewWidget(
@@ -356,6 +359,7 @@ class _BlockReviewWidgetState extends State<BlockReviewWidget> {
 
 //Comment section widgets
 //Container to hold comments which consist of a text and a score
+//contributed by Angie Ly
 //Located on these pages: song, album
 class ReviewSection extends StatefulWidget {
   final Map comments;
@@ -428,7 +432,7 @@ class _ReviewSectionState extends State<ReviewSection> {
   }
 }
 
-//Review comments from other users
+//Review comments from other users, contributed by Angie Ly
 //Located on these pages: song, album
 class ReviewComment extends StatefulWidget {
   final String userid, text;
@@ -506,6 +510,7 @@ class _ReviewCommentState extends State<ReviewComment> {
 }
 
 //Information block containing title, artist, average score, etc.
+//contributed by Angie Ly
 //Located on these pages: song, album
 class InfoBlock extends StatefulWidget {
   final String title, artist;

@@ -65,7 +65,7 @@ class _AlbumPageState extends State<AlbumPage> {
         .update(reviews);
   }
 
-//Get all reviews and rating for this page
+//Get all reviews and rating for this page, contributed by Angie Ly
   Future _getAlbumStorage(String id) async {
     final albumDB =
         FirebaseFirestore.instance.collection('albums').doc(id).get();
@@ -83,7 +83,7 @@ class _AlbumPageState extends State<AlbumPage> {
     });
   }
 
-//Return an average rating
+//Return an average rating, contributed by Angie Ly
   double _getAverage(Map ratings) {
     if (ratings.isEmpty) {
       return 0.0;

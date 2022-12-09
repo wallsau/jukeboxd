@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jukeboxd/utils/custom_widgets/user_page_widgets.dart';
 
+//UserRating screen contributed by Angie Ly
 class UserRatings extends StatelessWidget {
   UserRatings({required this.title, required this.type, super.key});
   final String title, type;
