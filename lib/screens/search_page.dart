@@ -10,6 +10,7 @@ import 'dart:async';
 import 'package:jukeboxd/utils/colors.dart';
 import 'album_page.dart';
 
+//SearchPage screen contributed by Austin Walls
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key}) : super(key: key);
 
@@ -31,9 +32,9 @@ class _SearchPageState extends State<SearchPage> {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      backgroundColor: purple,
+      backgroundColor: bgGray,
       appBar: AppBar(
-        backgroundColor: Colors.purple,
+        backgroundColor: purple,
         actions: [
           IconButton(
             icon: const Icon(Icons.search),
@@ -48,13 +49,6 @@ class _SearchPageState extends State<SearchPage> {
       ),
       body: Container(
         width: screenWidth,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF3279e2), Colors.purple],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
         child: Column(
           children: [
             const Expanded(
@@ -77,16 +71,22 @@ class _SearchPageState extends State<SearchPage> {
                     );
                   },
                   style: OutlinedButton.styleFrom(
-                    backgroundColor: Colors.white,
+                    backgroundColor: purple,
                   ),
-                  child: const Text('Return to Profile'),
+                  child: const Text(
+                    'Return to Profile',
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
                 OutlinedButton(
                   onPressed: _clearHistory,
                   style: OutlinedButton.styleFrom(
-                    backgroundColor: Colors.white,
+                    backgroundColor: purple,
                   ),
-                  child: const Text('Clear Search History'),
+                  child: const Text(
+                    'Clear Search History',
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
               ],
             )
@@ -161,35 +161,61 @@ class CustomSearchDelegate extends SearchDelegate {
         ),
       );
 
-  Widget buildResultsSuccess(results) {
+  Widget buildResultsSuccess(List<dynamic>? results) {
+    String imageUrl = '';
     final suggestArr = [query];
     _storeHistory(suggestArr);
     return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Color(0xFF3279e2), Colors.purple],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ),
-      ),
+      color: bgGray,
       child: ListView.builder(
-          itemCount: results.length,
+          itemCount: results!.length,
           itemBuilder: (context, index) {
             final result = results[index];
-
+            if (result.type.toString() != 'track') {
+              if (result.images.isNotEmpty) {
+                imageUrl = result.images[0].url.toString();
+                print(imageUrl + result.name.toString() + result.id.toString());
+              } else {
+                imageUrl = 'https://via.placeholder.com/150';
+              }
+            }
             return ListTile(
-              leading: (result!.type.toString() != 'track')
-                  ? img.Image.network(
-                      result!.images![0].url.toString(),
-                      errorBuilder: (BuildContext context, Object exception,
-                          StackTrace? strackTrace) {
-                        return const Text('Error');
+              leading: (result!.type.toString() != 'track' && imageUrl != '')
+                  ? FadeInImage.assetNetwork(
+                      placeholder: 'images/jukeboxd.jpg',
+                      image: imageUrl,
+                      imageErrorBuilder: (context, error, stackTrace) {
+                        return img.Image.asset('images/Jukeboxd.jpg');
                       },
                     )
                   : img.Image.asset('images/jukeboxd.jpg'),
-              title: Text(result!.name.toString()),
-              subtitle: Text(result!.id.toString()),
-              trailing: Text(result!.type.toString()),
+              title: Text(
+                result!.name.toString(),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+              subtitle: Text(
+                //result!.id.toString(),
+                result!.type.toString(),
+                style: TextStyle(color: bbarGray),
+              ),
+              //trailing: Text(result!.type.toString()),
+              trailing: (result!.type.toString().toLowerCase() == 'artist')
+                  ? Icon(
+                      Icons.person,
+                      color: Colors.white,
+                    )
+                  : (result!.type.toString().toLowerCase() == 'album')
+                      ? Icon(
+                          Icons.album,
+                          color: Colors.white,
+                        )
+                      : Icon(
+                          Icons.music_note,
+                          color: Colors.white,
+                        ),
               onTap: () {
                 switch (result!.type.toString().toLowerCase()) {
                   case 'artist':
@@ -231,42 +257,25 @@ class CustomSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Color(0xFF3279e2), Colors.purple],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ),
-      ),
-      child: StreamBuilder(
-          stream: db.collection('accounts').doc(uid).snapshots(),
-          builder: ((context, snapshot) {
-            final containsSearch =
-                snapshot.data?.data()?.containsKey('search history');
-            if (containsSearch != true) {
-              final defaultSearchHistory = ['Cher', 'Metallica', 'Drake'];
-              final List suggestions = defaultSearchHistory.where((element) {
-                return element.toLowerCase().contains(
-                      query.toLowerCase(),
-                    );
-              }).toList();
-              return ListView.builder(
-                  itemCount: suggestions.length,
-                  itemBuilder: ((context, index) {
-                    return ListTile(
-                      title: Text(suggestions[index]),
-                      onTap: () {
-                        query = suggestions[index];
-                      },
-                    );
-                  }));
-            }
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const CircularProgressIndicator();
-            }
-            final List searchHistory = snapshot.data!.get('search history');
-            final List suggestions = searchHistory.where((element) {
+    return StreamBuilder(
+        stream: db.collection('accounts').doc(uid).snapshots(),
+        builder: ((context, snapshot) {
+          final containsSearch =
+              snapshot.data?.data()?.containsKey('search history');
+          if (containsSearch != true) {
+            final defaultSearchHistory = [
+              'The Beatles',
+              'Michael Jackson',
+              'Stevie Wonder',
+              'The Rolling Stones',
+              'James Brown',
+              'Led Zeppelin',
+              'Bob Dylan',
+              'Jimi Hendrix',
+              'Prince',
+              'Bob Marley'
+            ];
+            final List suggestions = defaultSearchHistory.where((element) {
               return element.toLowerCase().contains(
                     query.toLowerCase(),
                   );
@@ -279,10 +288,31 @@ class CustomSearchDelegate extends SearchDelegate {
                     onTap: () {
                       query = suggestions[index];
                     },
+                    textColor: Colors.white,
                   );
                 }));
-          })),
-    );
+          }
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator();
+          }
+          final List searchHistory = snapshot.data!.get('search history');
+          final List suggestions = searchHistory.where((element) {
+            return element.toLowerCase().contains(
+                  query.toLowerCase(),
+                );
+          }).toList();
+          return ListView.builder(
+              itemCount: suggestions.length,
+              itemBuilder: ((context, index) {
+                return ListTile(
+                  title: Text(suggestions[index]),
+                  onTap: () {
+                    query = suggestions[index];
+                  },
+                  textColor: Colors.white,
+                );
+              }));
+        }));
   }
 
   Future _storeHistory(searchTerm) async {

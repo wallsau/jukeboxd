@@ -1,9 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:jukeboxd/screens/login_page.dart';
+import 'package:jukeboxd/screens/user_profile.dart';
 import 'package:jukeboxd/utils/colors.dart';
 
+//Contributed by Austin Walls
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -20,6 +23,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    User? firebaseUser = FirebaseAuth.instance.currentUser;
+    Widget homeWidget;
+
+    if (firebaseUser != null) {
+      homeWidget = UserProfile();
+    } else {
+      homeWidget = LoginPage();
+    }
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
@@ -34,6 +45,6 @@ class MyApp extends StatelessWidget {
                 headline6:
                     TextStyle(fontSize: 36.0, fontStyle: FontStyle.italic),
                 bodyText2: TextStyle(fontSize: 14.0, color: Colors.white))),
-        home: LoginPage());
+        home: homeWidget);
   }
 }

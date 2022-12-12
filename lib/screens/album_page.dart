@@ -1,6 +1,7 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
+import 'package:jukeboxd/screens/user_profile.dart';
 import 'package:spotify/spotify.dart';
 import 'package:jukeboxd/services/remote_services.dart';
 import 'package:jukeboxd/utils/custom_widgets/result_page_widgets.dart';
@@ -43,7 +44,7 @@ class _AlbumPageState extends State<AlbumPage> {
         .collection('album')
         .doc(widget.albumId)
         .get()
-        .then((snapshot) async {
+        .then((snapshot) {
       if (snapshot.exists) {
         setState(() {
           rating = snapshot.data()!['rating'];
@@ -57,15 +58,18 @@ class _AlbumPageState extends State<AlbumPage> {
   Future _createAlbumStorage(String id) async {
     final reviews = <String, Map<dynamic, dynamic>>{'allReviews': HashMap()};
     final ratings = <String, Map<dynamic, double>>{'allRatings': HashMap()};
-    db.collection('albums').doc(id).set(ratings);
-    db.collection('albums').doc(id).update(reviews);
+    await FirebaseFirestore.instance.collection('albums').doc(id).set(ratings);
+    await FirebaseFirestore.instance
+        .collection('albums')
+        .doc(id)
+        .update(reviews);
   }
 
-//Get all reviews and rating for this page
+//Get all reviews and rating for this page, contributed by Angie Ly
   Future _getAlbumStorage(String id) async {
     final albumDB =
         FirebaseFirestore.instance.collection('albums').doc(id).get();
-    await albumDB.then((snapshot) async {
+    await albumDB.then((snapshot) {
       if (snapshot.exists) {
         setState(() {
           allReviews = snapshot.data()!['allReviews'];
@@ -79,7 +83,7 @@ class _AlbumPageState extends State<AlbumPage> {
     });
   }
 
-//Return an average rating
+//Return an average rating, contributed by Angie Ly
   double _getAverage(Map ratings) {
     if (ratings.isEmpty) {
       return 0.0;
@@ -106,49 +110,64 @@ class _AlbumPageState extends State<AlbumPage> {
       appBar: AppBar(
         title: (album.name == null)
             ? const Text('Loading...')
-            : Text(album.name.toString()),
+            : (album.name.toString().length > 32)
+                ? Text(
+                    album.name.toString(),
+                    style: TextStyle(fontSize: 20.0),
+                  )
+                : FittedBox(
+                    fit: BoxFit.scaleDown, child: Text(album.name.toString())),
         centerTitle: true,
       ),
-      body: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).unfocus();
-          TextEditingController().clear();
-        },
-        child: SingleChildScrollView(
-          child: Center(
-            child: Column(
-              children: [
-                CoverImage(imageUrl: imageUrl),
-                RateBar(
-                  initRating: rating,
-                  ignoreChange: false,
-                  starSize: 50.0,
-                  id: widget.albumId,
-                  type: 'album',
-                ),
-                BlockReviewWidget(
-                  id: widget.albumId,
-                  type: album.type,
-                  initReview: review,
-                  artist: (album.name == null)
-                      ? ''
-                      : album.artists![0].name.toString(),
-                  title: album.name,
-                  imageUrl: (album.name == null) ? '' : album.images!.first.url,
-                ),
-                InfoBlock(
-                  title: album.name.toString(),
-                  artist: album.artists.toString(),
-                  avgRating: avgRating,
-                ),
-                AlbumList(album: album),
-                ReviewSection(
-                  comments: allReviews,
-                  scores: allRatings
-                      .map((key, value) => MapEntry(key, value?.toDouble())),
-                ),
-              ],
-            ),
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            children: [
+              CoverImage(imageUrl: imageUrl),
+              RateBar(
+                initRating: rating,
+                ignoreChange: false,
+                starSize: 50.0,
+                id: widget.albumId,
+                type: 'album',
+                title: album.name,
+                artist: (album.name == null)
+                    ? ''
+                    : album.artists![0].name.toString(),
+                imageUrl: (album.name == null) ? '' : album.images!.first.url,
+                typeCollection: 'albums',
+              ),
+              BlockReviewWidget(
+                id: widget.albumId,
+                type: album.type,
+                initReview: review,
+                artist: (album.name == null)
+                    ? ''
+                    : album.artists![0].name.toString(),
+                title: album.name,
+                imageUrl: (album.name == null) ? '' : album.images!.first.url,
+                typeCollection: 'albums',
+              ),
+              InfoBlock(
+                title: album.name.toString(),
+                artist: (album.name == null)
+                    ? ''
+                    : album.artists![0].name.toString(),
+                avgRating: avgRating,
+              ),
+              AlbumList(album: album),
+              ReviewSection(
+                comments: allReviews,
+                scores: allRatings
+                    .map((key, value) => MapEntry(key, value?.toDouble())),
+              ),
+              ElevatedButton(
+                  onPressed: (() {
+                    Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) => UserProfile()));
+                  }),
+                  child: const Text('Return to Profile'))
+            ],
           ),
         ),
       ),

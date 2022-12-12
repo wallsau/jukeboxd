@@ -37,17 +37,34 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   google_sign_in: ^5.4.2
-  firebase_core: ^1.24.0
-  firebase_auth: ^3.11.0
+  firebase_core: ^2.3.0
+  firebase_auth: ^4.1.3
   flutter_rating_bar: ^4.0.1
   flutter_dotenv: ^5.0.2
   spotify: ^0.8.0
-  cloud_firestore: ^3.5.1
+  cloud_firestore: ^4.1.0
   cached_network_image: ^3.2.2
+  flutter_profile_picture: ^2.0.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+  flutter_launcher_icons: ^0.11.0
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "images/Jukeboxd_Circle.png"
+  min_sdk_android: 21 
+  web:
+    generate: true
+    image_path: "images/Jukeboxd_Circle.png"
+    background_color: "#ff545454"
+    theme_color: "#ff545454"
+  windows:
+    generate: true
+    image_path: "images/Jukeboxd_Circle.png"
+    icon_size: 48 
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

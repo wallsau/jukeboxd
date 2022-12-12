@@ -1,6 +1,7 @@
 import 'package:spotify/spotify.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+//Contributed by Austin Walls
 class RemoteService {
   final credentials = SpotifyApiCredentials(
       dotenv.env['CLIENT_ID'], dotenv.env['CLIENT_SECRET']);

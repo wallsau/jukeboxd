@@ -1,3 +1,4 @@
+//Contributed by Austin Walls
 //regex for email text form
 String? validateEmail(String? formEmail) {
   if (formEmail == null || formEmail.isEmpty) {

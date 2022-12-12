@@ -8,7 +8,7 @@ import 'package:jukeboxd/utils/custom_widgets/rating_widget.dart';
 import 'package:spotify/spotify.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-//Artist or album picture
+//Artist or album picture, contributed by Angie Ly
 //Found on: artist_page, album_page
 class CoverImage extends StatelessWidget {
   const CoverImage({
@@ -76,6 +76,7 @@ class SongImage extends StatelessWidget {
 }
 
 //Collection of albums or songs. Requires a title and a list of albums/songs
+//contributed by Angie Ly
 //Found on: artist_page
 class ArtistList extends StatelessWidget {
   ArtistList({required this.title, required this.musicCollection, super.key});
@@ -122,7 +123,7 @@ class ArtistList extends StatelessWidget {
                           color: purple,
                         ),
                       ),
-                      trailing: Icon(Icons.star_border_outlined),
+                      trailing: Icon(Icons.keyboard_arrow_right_sharp),
                       onTap: () {
                         switch (
                             musicCollection!.elementAt(index).type.toString()) {
@@ -171,6 +172,7 @@ class ArtistList extends StatelessWidget {
 }
 
 //Collection of songs for an album. Requires a title and a list of songs
+//contributed by Angie Ly
 //Found on: album_page
 class AlbumList extends StatelessWidget {
   const AlbumList({required this.album, super.key});
@@ -211,7 +213,18 @@ class AlbumList extends StatelessWidget {
                           width: 200,
                           child: Text(
                               album.tracks!.elementAt(index).name.toString())),
-                      trailing: Icon(Icons.star_border_outlined),
+                      trailing: Icon(Icons.keyboard_arrow_right_sharp),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SongPage(
+                              trackId:
+                                  album.tracks!.elementAt(index).id.toString(),
+                            ),
+                          ),
+                        );
+                      },
                     );
                   },
                 ),
@@ -225,6 +238,7 @@ class AlbumList extends StatelessWidget {
 }
 
 //Review function widget with a submit and delete button (nonfunctional)
+//contributed by Angie Ly
 //Located on these pages: song_page, album_page
 class BlockReviewWidget extends StatefulWidget {
   BlockReviewWidget(
@@ -234,9 +248,10 @@ class BlockReviewWidget extends StatefulWidget {
       required this.type,
       this.initReview,
       this.imageUrl = '',
+      this.typeCollection,
       super.key});
   final String id;
-  final String? type, initReview, title, artist, imageUrl;
+  final String? type, initReview, title, artist, imageUrl, typeCollection;
   @override
   State<BlockReviewWidget> createState() => _BlockReviewWidgetState();
 }
@@ -304,7 +319,8 @@ class _BlockReviewWidgetState extends State<BlockReviewWidget> {
                             widget.type,
                             widget.title,
                             widget.artist,
-                            widget.imageUrl);
+                            widget.imageUrl,
+                            widget.typeCollection);
                       },
                       child: const Text(
                         'Submit',
@@ -322,7 +338,8 @@ class _BlockReviewWidgetState extends State<BlockReviewWidget> {
                     ),
                     child: TextButton(
                       onPressed: () {
-                        DataBase().deleteReview(widget.id, widget.type);
+                        DataBase().deleteReview(
+                            widget.id, widget.type, widget.typeCollection);
                       },
                       child: const Text(
                         'Delete',
@@ -342,6 +359,7 @@ class _BlockReviewWidgetState extends State<BlockReviewWidget> {
 
 //Comment section widgets
 //Container to hold comments which consist of a text and a score
+//contributed by Angie Ly
 //Located on these pages: song, album
 class ReviewSection extends StatefulWidget {
   final Map comments;
@@ -414,7 +432,7 @@ class _ReviewSectionState extends State<ReviewSection> {
   }
 }
 
-//Review comments from other users
+//Review comments from other users, contributed by Angie Ly
 //Located on these pages: song, album
 class ReviewComment extends StatefulWidget {
   final String userid, text;
@@ -430,7 +448,7 @@ class ReviewComment extends StatefulWidget {
 }
 
 class _ReviewCommentState extends State<ReviewComment> {
-  String username = '';
+  String username = 'Default';
   Future _getUsername(String id) async {
     await FirebaseFirestore.instance
         .collection('accounts')
@@ -492,6 +510,7 @@ class _ReviewCommentState extends State<ReviewComment> {
 }
 
 //Information block containing title, artist, average score, etc.
+//contributed by Angie Ly
 //Located on these pages: song, album
 class InfoBlock extends StatefulWidget {
   final String title, artist;
@@ -514,7 +533,7 @@ class _InfoBlockState extends State<InfoBlock> {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
-        height: 150.0,
+        height: 175.0,
         width: screenWidth,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(40.0),
@@ -523,22 +542,63 @@ class _InfoBlockState extends State<InfoBlock> {
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Container(
-            height: 150,
+            height: 175,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(40.0),
               color: iconsGray,
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Center(
-                child: Text(
-                    "${widget.title} by ${widget.artist}\nCommunity score: ${widget.avgRating}",
-                    style: const TextStyle(
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.bold,
-                      color: purple,
-                    ),
-                    textAlign: TextAlign.center),
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                        child: Text(
+                          '${widget.title}',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontStyle: FontStyle.italic,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20.0,
+                              color: purple),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: Text(
+                          'by ${widget.artist}',
+                          style: TextStyle(
+                            fontSize: 20.0,
+                            color: bgGray,
+                          ),
+                        ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: Text('Community score:',
+                                style: const TextStyle(
+                                  fontSize: 20.0,
+                                  color: bgGray,
+                                ),
+                                textAlign: TextAlign.center),
+                          ),
+                          Text('${widget.avgRating}/5.0',
+                              style: const TextStyle(
+                                fontSize: 25.0,
+                                fontWeight: FontWeight.bold,
+                                color: purple,
+                              )),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
           ),

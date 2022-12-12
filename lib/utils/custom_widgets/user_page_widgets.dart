@@ -1,5 +1,4 @@
 /* Widgets associated with user_profile, user_ratings, and user_reviews */
-import 'dart:async';
 import 'package:jukeboxd/services/firebase.dart';
 import 'package:flutter/material.dart';
 import 'package:jukeboxd/screens/user_ratings.dart';
@@ -8,9 +7,9 @@ import 'package:jukeboxd/utils/colors.dart';
 import 'package:jukeboxd/utils/custom_widgets/rating_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_profile_picture/flutter_profile_picture.dart';
 
-//User profile picture and name
-/*Will need to replace AssetImages later*/
+//User profile picture and name, contributed by Angie Ly
 //Located on these pages: user_profile
 class UserHeader extends StatelessWidget {
   final AssetImage userProfile;
@@ -31,14 +30,11 @@ class UserHeader extends StatelessWidget {
           padding: const EdgeInsets.all(10.0),
           margin: const EdgeInsets.all(10.0),
           alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: Colors.blueGrey,
-            shape: BoxShape.circle,
-            image: DecorationImage(image: userProfile),
-          ),
+          // Profile picture done by Austin Ellis
+          child: ProfilePicture(name: username, radius: 31, fontsize: 20),
         ),
         Text(
-          "@$username",
+          username,
           style: const TextStyle(color: buttonRed, fontWeight: FontWeight.bold),
         ),
       ],
@@ -46,7 +42,7 @@ class UserHeader extends StatelessWidget {
   }
 }
 
-//Images of top five rated
+//Images of top five rated, contributed by Angie Ly
 /*Will need to replace AssetImages later*/
 //Located on these pages: user_profile
 class Top5 extends StatefulWidget {
@@ -80,7 +76,7 @@ class _Top5State extends State<Top5> {
             child: Padding(
               padding: EdgeInsets.all(8.0),
               child: Text(
-                "My Top 5",
+                "My Top 5 Albums",
                 style: TextStyle(color: bbarGray),
               ),
             ),
@@ -132,7 +128,7 @@ class _Top5State extends State<Top5> {
   }
 }
 
-//Menu containing options to view user collections
+//Menu containing options to view user collections, contributed by Angie Ly
 //Located on these pages: user_profile
 class ProfileMenu extends StatefulWidget {
   const ProfileMenu({
@@ -241,15 +237,11 @@ class _ProfileMenuState extends State<ProfileMenu> {
 }
 
 //Creates the main container for holding the user's ratings collections
+//contributed by Angie Ly
 //Located on these pages: user_ratings
 class UserList extends StatefulWidget {
-  final int numRatings;
   final String title, type;
-  UserList(
-      {required this.numRatings,
-      required this.title,
-      required this.type,
-      super.key});
+  UserList({required this.title, required this.type, super.key});
 
   @override
   State<UserList> createState() => _UserListState();
@@ -273,24 +265,30 @@ class _UserListState extends State<UserList> {
                 .collection('accounts')
                 .doc(DataBase().getUid())
                 .collection(widget.type)
+                .where('rating', isNull: false)
                 .snapshots(),
             builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return Container(
-                  child: const Center(
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                const Center(child: CircularProgressIndicator());
+              } else if (snapshot.connectionState == ConnectionState.active) {
+                if (!snapshot.hasData) {
+                  return const Center(
                     child: Text('No Data'),
+                  );
+                }
+                return Column(
+                  children: List.generate(
+                    snapshot.data!.size,
+                    (index) => TitleAndRating(
+                      rating: snapshot.data!.docs[index]['rating'],
+                      musicTitle: snapshot.data!.docs[index]['title'],
+                      artist: snapshot.data!.docs[index]['artist'],
+                    ),
                   ),
                 );
               }
-              return Column(
-                children: List.generate(
-                  snapshot.data!.size,
-                  (index) => TitleAndRating(
-                    rating: snapshot.data!.docs[index]['rating'],
-                    trackTitle: snapshot.data!.docs[index]['title'],
-                    artist: snapshot.data!.docs[index]['artist'],
-                  ),
-                ),
+              return const Center(
+                child: Text('No ratings found'),
               );
             },
           ),
@@ -301,6 +299,7 @@ class _UserListState extends State<UserList> {
 }
 
 //Creates the main container for holding the user's reviews
+//contributed by Angie Ly
 //Located on these pages: user_reviews
 class UserReviewList extends StatefulWidget {
   final String title, type;
@@ -328,6 +327,7 @@ class _UserReviewListState extends State<UserReviewList> {
                 .collection('accounts')
                 .doc(DataBase().getUid())
                 .collection(widget.type)
+                .where('review', isNull: false)
                 .snapshots(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
@@ -353,86 +353,80 @@ class _UserReviewListState extends State<UserReviewList> {
   }
 }
 
-//Show the title of a song/album and a star rating
+//Show the title of a song/album and a star rating, contributed by Angie Ly
 //Located on user_ratings
 class TitleAndRating extends StatelessWidget {
   final double rating;
-  final String trackTitle;
+  final String musicTitle;
   final String artist;
   TitleAndRating(
       {required this.rating,
-      this.trackTitle = 'Untitled',
-      this.artist = 'Unknown',
+      required this.musicTitle,
+      required this.artist,
       super.key});
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Row(
-        children: [
-          Container(
-            margin: const EdgeInsets.only(right: 20.0),
-            width: 0.55 * screenWidth,
-            height: 40.0,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10.0),
-              color: bbarGray,
-            ),
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          trackTitle,
-                          style: const TextStyle(
-                              fontStyle: FontStyle.italic,
-                              fontWeight: FontWeight.bold,
-                              color: buttonRed,
-                              fontSize: 17.0),
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.only(left: 5.0, right: 5.0),
-                          child: Text('by',
-                              style: TextStyle(
-                                fontSize: 17.0,
-                                color: purple,
-                              )),
-                        ),
-                        Text(
-                          artist,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 17.0,
-                            color: purple,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+      child: Container(
+        height: 80.0,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10.0),
+          color: bbarGray,
+        ),
+        child: SingleChildScrollView(
+            child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                musicTitle,
+                style: const TextStyle(
+                    fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.bold,
+                    color: buttonRed,
+                    fontSize: 18.0),
+                maxLines: 3,
               ),
-            ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.only(right: 5.0),
+                    child: Text('by',
+                        style: TextStyle(
+                          fontSize: 15.0,
+                          color: purple,
+                        )),
+                  ),
+                  Text(
+                    artist,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15.0,
+                      color: purple,
+                    ),
+                    maxLines: 3,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 5.0),
+              RateBar(
+                initRating: rating,
+                ignoreChange: true,
+                starSize: 20.0,
+              ),
+            ],
           ),
-          Expanded(
-            child: RateBar(
-              initRating: rating,
-              ignoreChange: true,
-              starSize: 20.0,
-            ),
-          ),
-        ],
+        )),
       ),
     );
   }
 }
 
-//Show the title of a song/album and a review
+//Show the title of a song/album and a review, contributed by Angie Ly
 //Located on user_reviews
 class TitleAndReview extends StatelessWidget {
   final String trackTitle;
@@ -440,8 +434,8 @@ class TitleAndReview extends StatelessWidget {
   final String reviewText;
   TitleAndReview(
       {required this.reviewText,
-      this.trackTitle = 'Untitled',
-      this.artist = 'Unknown',
+      required this.trackTitle,
+      required this.artist,
       super.key});
 
   @override
@@ -455,7 +449,7 @@ class TitleAndReview extends StatelessWidget {
             child: Container(
               margin: const EdgeInsets.only(left: 8.0, right: 8.0),
               width: screenWidth,
-              height: 70.0,
+              height: 100.0,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10.0),
                 color: bbarGray,
@@ -466,38 +460,31 @@ class TitleAndReview extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        children: [
-                          Text(
-                            trackTitle,
-                            style: const TextStyle(
-                                fontStyle: FontStyle.italic,
-                                fontWeight: FontWeight.bold,
-                                color: buttonRed,
-                                fontSize: 17.0),
-                          ),
-                          const Padding(
-                            padding: EdgeInsets.only(left: 5.0, right: 5.0),
-                            child: Text('by',
-                                style: TextStyle(
-                                  fontSize: 17.0,
-                                  color: purple,
-                                )),
-                          ),
-                          Text(
-                            artist,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 17.0,
-                              color: purple,
-                            ),
-                          ),
-                        ],
+                      Text(
+                        trackTitle,
+                        style: const TextStyle(
+                            fontStyle: FontStyle.italic,
+                            fontWeight: FontWeight.bold,
+                            color: buttonRed,
+                            fontSize: 20.0),
+                        maxLines: 3,
+                      ),
+                      Text(
+                        artist,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15.0,
+                          color: purple,
+                        ),
+                        maxLines: 3,
+                      ),
+                      const SizedBox(
+                        height: 5.0,
                       ),
                       Text(
                         reviewText,
                         style: const TextStyle(
-                            fontSize: 15.0, color: Colors.black),
+                            fontSize: 18.0, color: Colors.black),
                       ),
                     ],
                   ),
